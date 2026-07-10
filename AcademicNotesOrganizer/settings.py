@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-*jaj3yoex#h)sdqs+9s_uwde3t#_7p8tv6bgg001!c%lq%j!th
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+AUTH_USER_MODEL = 'users.User'
 
 # Application definition
 
@@ -77,9 +77,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'student_db',
-        'User': 'postgres',
-        'PASSWORD': 'manage',
-        'HOST': 'localhost',
+        'User': 'GIGABYTE',
+        'PASSWORD': '1234',
+        "HOST": "localhost",
         'PORT': '5432',
     }
 }
@@ -120,3 +120,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
