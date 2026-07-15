@@ -208,3 +208,32 @@ body{
 .container.active .toggle-right{
     transform: translateX(200%);
 }
+.error-message {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-left: 4px solid #d32f2f;
+        }
+        .success-message {
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-left: 4px solid #2e7d32;
+            animation: fadeIn 0.5s;
+        }
+        .field-error {
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }

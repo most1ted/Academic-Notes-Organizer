@@ -5,9 +5,11 @@ from .models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+User = get_user_model()
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder': 'Password'}))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -26,7 +28,7 @@ class LoginForm(forms.Form):
 
         return getattr(self, '_user', None)
 
-class RegisterForms(forms.Form):
+class RegisterForm(forms.Form):
     fields = ['username', 'email', 'password']
     username = forms.CharField(label='Username', max_length=100,
                                error_messages={
@@ -41,80 +43,19 @@ class RegisterForms(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        for name in self.fields:
-            field = self.fields[name]
-            field.widget.attrs.update({
-                'onfocus': f'animateField(this)',
-                'onblur': f'revertAnimation(this)'
-            })
-
-    def clean_numbers(self):
-        numbers = self.cleaned_data.get('numbers')
-        if not numbers.isdigit():
-            raise forms.ValidationError("Please enter valid numbers.")
-        return numbers
-
-class LogintForm(forms.Form):
-    username = forms.CharField(
-        max_length=150,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Username'
-        })
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Password'
-        })
-    )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        username = cleaned_data.get('username')
-        password = cleaned_data.get('password')
-
-        if username and password:
-            user = authenticate(username=username, password=password)
-            if user is None:
-                raise forms.ValidationError("Username or password is incorrect")
-            self._user = user
-        return cleaned_data
-
-    def get_user(self):
-        return getattr(self, '_user', None)
-
-class RegisterForm(forms.Form):
-    username = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Username'
-        })
-    )
-    email = forms.EmailField(
-        max_length=100,
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Email'
-        })
-    )
-    password = forms.CharField(
-        max_length=100,
-        widget=forms.PasswordInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Password'
-        })
-    )
-
     def clean_username(self):
         username = self.cleaned_data.get('username')
+
         if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("Username already registered")
+            raise forms.ValidationError("This username is already taken")
         return username
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
+
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email already registered")
+            raise forms.ValidationError("This email is already registered")
         return email
+
+
+
