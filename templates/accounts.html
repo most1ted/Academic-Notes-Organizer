@@ -1,0 +1,167 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Account — My Courses</title>
+  <meta name="description" content="Your enrolled courses — view progress, add new courses, and manage your account.">
+  <link href="{% static "css/accounts.css" %}" rel="stylesheet">
+  <link href="{% static "css/home.css" %}" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <div class="container navbar-inner">
+        <a class="brand" href="/" aria-label="Note Organizer Home">
+          <svg class="brand-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M6 2h8l4 4v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+          </svg>
+          <span class="brand-name">Note Organizer</span>
+        </a>
+
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle menu">
+          <span class="hamburger"></span>
+        </button>
+
+        <div id="nav-menu" class="nav-menu">
+          <ul class="nav-list">
+
+          </ul>
+          <div class="nav-ctas">
+              <a class="btn btn-primary" href="/accounts/logout/">log out</a>
+
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+    <header>
+    <div id="mobileMenu" class="mobile-menu" hidden>
+      <a href="#overview">Overview</a>
+      <a href="#courses">My Courses</a>
+      <a href="#settings">Settings</a>
+      <a href="#billing">Billing</a>
+      <a href="#logout" id="logoutBtn">Sign out</a>
+    </div>
+  </header>
+
+  <main class="page" id="app">
+    <div class="container page-inner">
+      <aside class="sidebar" aria-label="Account navigation">
+        <nav>
+          <ul class="side-list">
+            <li><a href="#overview" class="active">Overview</a></li>
+            <li><a href="#courses">My Courses</a></li>
+            <li><a href="#progress">Progress</a></li>
+            <li><a href="#settings">Settings</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <section class="content" id="coursesSection" tabindex="-1">
+        <div class="account-header">
+          <div>
+            <h1 class="title">My Courses</h1>
+            <p class="subtitle">Courses you're enrolled in. Click any card to view details or add a new course.</p>
+          </div>
+
+          <div class="controls">
+            <label for="searchInput" class="visually-hidden">Search courses</label>
+            <input id="searchInput" type="search" placeholder="Search courses..." aria-label="Search courses">
+
+            <label for="filterSelect" class="visually-hidden">Filter courses</label>
+            <select id="filterSelect" aria-label="Filter courses">
+              <option value="all">All</option>
+              <option value="inprogress">In progress</option>
+              <option value="completed">Completed</option>
+              <option value="archived">Archived</option>
+            </select>
+
+            <button id="addCourseBtn" class="btn-add" aria-haspopup="dialog" aria-controls="addCourseModal">+ Add course</button>
+          </div>
+        </div>
+
+        <div class="summary" aria-live="polite">
+          <p id="summaryText">Loading courses…</p>
+        </div>
+
+        <div id="coursesGrid" class="grid" aria-live="polite">
+          <!-- skeletons or course cards injected by JS -->
+        </div>
+
+        <div id="emptyState" class="empty" hidden>
+          <h3>No courses found</h3>
+          <p>Try adjusting your filters or explore new courses.</p>
+          <a class="btn-primary" href="#catalog">Browse catalog</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Drawer / modal for course details -->
+  <div id="courseDrawer" class="drawer" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="drawer-backdrop" data-dismiss></div>
+    <aside class="drawer-panel" role="document" aria-labelledby="drawerTitle">
+      <button class="drawer-close" aria-label="Close" data-dismiss>&times;</button>
+      <div class="drawer-content" id="drawerContent" tabindex="-1">
+        <!-- populated by JS -->
+      </div>
+    </aside>
+  </div>
+
+  <!-- AddCourse Modal (accessible dialog) -->
+  <div id="addCourseModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="addCourseTitle">
+    <div class="modal-backdrop" data-dismiss></div>
+    <div class="modal-panel" role="document">
+      <header class="modal-header">
+        <h2 id="addCourseTitle">Add new course</h2>
+        <button class="modal-close" data-dismiss aria-label="Close dialog">&times;</button>
+      </header>
+
+      <form id="addCourseForm" class="modal-form" novalidate>
+        <div class="field">
+          <label for="courseId">Course ID</label>
+          <input id="courseId" name="courseId" type="text" required maxlength="64" placeholder="e.g., c7">
+          <div class="field-note">Unique identifier used in URLs (letters, numbers, hyphens).</div>
+        </div>
+
+        <div class="field">
+          <label for="courseTitle">Title</label>
+          <input id="courseTitle" name="title" type="text" required maxlength="120" placeholder="Course title">
+        </div>
+
+        <div class="field">
+          <label for="courseDesc">Description</label>
+          <textarea id="courseDesc" name="description" rows="4" maxlength="1000" placeholder="Short description"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="courseMedia">Media (PDF or image)</label>
+          <input id="courseMedia" name="media" type="file" accept="application/pdf,image/*">
+          <div id="mediaPreview" class="media-preview" aria-live="polite"></div>
+          <div class="field-note">Allowed: PDF, JPG, PNG, GIF. Max size: 5 MB.</div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" data-dismiss>Cancel</button>
+          <button type="submit" class="btn-primary" id="addCourseSubmit">Add course</button>
+        </div>
+
+        <div id="addCourseMessage" class="form-message" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <small>&copy; <span id="year"></span> LearnSpace</small>
+      <nav aria-label="Footer">
+
+      </nav>
+    </div>
+  </footer>
+
+  <script src="{% static "js/accounts.js" %}" defer></script>
+</body>
+</html>

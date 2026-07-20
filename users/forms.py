@@ -1,11 +1,12 @@
 from django.forms import forms
 from django import forms
 from django.contrib.auth.models import User
-from .models import User
+from .models import User, Course
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
+from .models import Note
 User = get_user_model()
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
@@ -52,10 +53,41 @@ class RegisterForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("This email is already registered")
         return email
 
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ['title', 'content','file','is_public']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Content'}),
+            'file': forms.FileInput(attrs={'class': 'form-control', 'placeholder': 'File'}),
+            'is_public': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
+
+
+        }
+class CourseForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = [
+            'title','description','code','is_public','price'
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Description'}),
+            'code' :forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Code'}),
+            'is_public': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Price'}),
+
+        }
+        def clean_title(self):
+            title =self.cleaned_data.get('title')
+            if len(title) <3:
+                raise forms.ValidationError("Please enter your title.")
+            return title
 
 
