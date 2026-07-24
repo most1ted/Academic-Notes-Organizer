@@ -61,15 +61,14 @@ class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
         fields = ['title', 'content','file','is_public']
+
+
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Content'}),
             'file': forms.FileInput(attrs={'class': 'form-control', 'placeholder': 'File'}),
-            'is_public': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_public': forms.CheckboxInput(attrs={'class': 'form-check-input'}),}
 
-
-
-        }
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course

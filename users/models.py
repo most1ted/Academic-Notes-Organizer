@@ -29,7 +29,7 @@ class Course(models.Model):
     def get_last_note(self):
         return self.notes.order_by('-created_at').first()
 class Note(models.Model):
-    course = models.ForeignKey(Course,on_delete=models.CASCADE ,related_name='notes')
+    course = models.ForeignKey(Course,on_delete=models.CASCADE ,related_name='notes',verbose_name="course")
     title = models.CharField(max_length=100)
     content = models.TextField()
     user = models.ForeignKey(User,on_delete=models.CASCADE)
