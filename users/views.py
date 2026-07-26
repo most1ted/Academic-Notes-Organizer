@@ -243,7 +243,7 @@ def course_detail(request,course_id):
     return render(request,'course/course_detail.html',{'course':course,'notes':notes})
 
 
-@login_required
+
 def note_list(request):
     notes = Note.objects.filter(user=request.user).order_by('-created_at')
     search_query = request.GET.get('search', '')
