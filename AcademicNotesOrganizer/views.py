@@ -1,3 +1,3 @@
 from django.shortcuts import render
 def main(request):
-    return render(request,'base.html')
+    return render(request, 'accounts/home.html')
