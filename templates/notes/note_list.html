@@ -1,0 +1,210 @@
+{% extends 'accounts/home.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>
+                <i class="fas fa-file-alt text-primary"></i> My Notes
+            </h2>
+            <p class="text-muted">All your notes across all courses</p>
+        </div>
+        <div>
+            <a href="{% url 'courses' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Courses
+            </a>
+        </div>
+    </div>
+
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-file-alt"></i> Total Notes</h5>
+                    <h2 class="mb-0">{{ total_notes }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-globe"></i> Public</h5>
+                    <h2 class="mb-0">{{ public_notes }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-lock"></i> Private</h5>
+                    <h2 class="mb-0">{{ private_notes }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-paperclip"></i> With Files</h5>
+                    <h2 class="mb-0">{{ notes_with_files }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" name="search" class="form-control"
+                               placeholder="Search notes by title or content..."
+                               value="{{ search_query }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="course" class="form-select">
+                        <option value="">All Courses</option>
+                        {% for course in courses %}
+                            <option value="{{ course.id }}" {% if course_filter|add:"0" == course.id %}selected{% endif %}>
+                                {{ course.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for note in notes %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-truncate" title="{{ note.title }}">
+                        {{ note.title }}
+                    </h5>
+                    <span class="badge bg-primary">
+                        <i class="fas fa-book"></i> {{ note.course.title|truncatechars:15 }}
+                    </span>
+                </div>
+
+                <div class="card-body">
+
+                    <p class="card-text text-muted">
+                        {{ note.summary|truncatewords:25|default:"No summary" }}
+                    </p>
+
+
+                    {% if note.file %}
+                        <div class="text-center py-2">
+                            <i class="fas {{ note.get_file_icon }} fa-2x"></i>
+                            <p class="small text-muted mb-0">
+                                {{ note.original_filename }}
+                                <br>
+                                {{ note.get_file_size_display }}
+                            </p>
+                        </div>
+                    {% endif %}
+
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar"></i> {{ note.created_at|date:"Y-m-d" }}
+                        </small>
+                        <div>
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-eye"></i> {{ note.views_count }}
+                            </span>
+                            {% if note.is_public %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-globe"></i>
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card-footer bg-transparent">
+                    <div class="btn-group w-100" role="group">
+                        {% if note.file %}
+                            <a href="{% url 'note_download' note.id %}"
+                               class="btn btn-success btn-sm" title="Download">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'note_edit' note.id %}"
+                           class="btn btn-warning btn-sm" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'note_delete' note.id %}"
+                           class="btn btn-danger btn-sm" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                        <a href="{% url 'course_detail' note.course.id %}"
+                           class="btn btn-info btn-sm" title="View Course">
+                            <i class="fas fa-book"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center p-5">
+                <i class="fas fa-file-alt fa-4x mb-3"></i>
+                <h4>No Notes Found!</h4>
+                <p class="mb-3">
+                    {% if search_query %}
+                        No notes matching "<strong>{{ search_query }}</strong>"
+                    {% else %}
+                        You haven't created any notes yet.
+                    {% endif %}
+                </p>
+                <a href="{% url 'note_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create a Note
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    {% if notes.has_other_pages %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if notes.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ notes.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+
+                {% for num in notes.paginator.page_range %}
+                    <li class="page-item {% if notes.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if notes.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ notes.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}
