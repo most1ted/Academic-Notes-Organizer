@@ -13,7 +13,7 @@
   <header class="site-header">
     <nav class="navbar" role="navigation" aria-label="Main navigation">
       <div class="container navbar-inner">
-        <a class="brand" href="/" aria-label="Note Organizer Home">
+        <a class="brand" href="/static" aria-label="Note Organizer Home">
           <svg class="brand-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="currentColor" d="M6 2h8l4 4v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
           </svg>
@@ -87,7 +87,7 @@
         </div>
 
         <div id="coursesGrid" class="grid" aria-live="polite">
-          <!-- skeletons or course cards injected by JS -->
+
         </div>
 
         <div id="emptyState" class="empty" hidden>
@@ -99,18 +99,18 @@
     </div>
   </main>
 
-  <!-- Drawer / modal for course details -->
+
   <div id="courseDrawer" class="drawer" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="drawer-backdrop" data-dismiss></div>
     <aside class="drawer-panel" role="document" aria-labelledby="drawerTitle">
       <button class="drawer-close" aria-label="Close" data-dismiss>&times;</button>
       <div class="drawer-content" id="drawerContent" tabindex="-1">
-        <!-- populated by JS -->
+
       </div>
     </aside>
   </div>
 
-  <!-- AddCourse Modal (accessible dialog) -->
+
   <div id="addCourseModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="addCourseTitle">
     <div class="modal-backdrop" data-dismiss></div>
     <div class="modal-panel" role="document">
