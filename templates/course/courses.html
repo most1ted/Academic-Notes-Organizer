@@ -1,0 +1,179 @@
+{% extends 'accounts/home.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white py-3">
+                    <h4 class="mb-0">
+                        <i class="fas fa-{% if course %}edit{% else %}plus-circle{% endif %}"></i>
+                        {% if course %}
+                            Edit Course
+                        {% else %}
+                            Create New Course
+                        {% endif %}
+                    </h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                                <i class="fas fa-heading text-primary"></i> Course Title <span class="text-danger">*</span>
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger small mt-1">{{ form.title.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">Enter the full name of the course (e.g., "Advanced Programming")</small>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
+                                <i class="fas fa-align-left text-primary"></i> Description
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">Brief description of the course content</small>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.code.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fas fa-tag text-primary"></i> Course Code
+                                </label>
+                                {{ form.code }}
+                                {% if form.code.errors %}
+                                    <div class="text-danger small mt-1">{{ form.code.errors }}</div>
+                                {% endif %}
+                                <small class="text-muted">e.g., CS101, MATH202</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.instructor.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fas fa-user-tie text-primary"></i> Instructor
+                                </label>
+                                {{ form.instructor }}
+                                {% if form.instructor.errors %}
+                                    <div class="text-danger small mt-1">{{ form.instructor.errors }}</div>
+                                {% endif %}
+                                <small class="text-muted">Name of the course instructor</small>
+                            </div>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="{{ form.semester.id_for_label }}" class="form-label fw-bold">
+                                <i class="fas fa-calendar-alt text-primary"></i> Semester
+                            </label>
+                            {{ form.semester }}
+                            {% if form.semester.errors %}
+                                <div class="text-danger small mt-1">{{ form.semester.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">e.g., Fall 2024, Spring 2025</small>
+                        </div>
+
+                        <hr>
+
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch mt-2">
+                                    {{ form.is_public }}
+                                    <label class="form-check-label fw-bold" for="{{ form.is_public.id_for_label }}">
+                                        <i class="fas fa-globe text-primary"></i> Make Course Public
+                                    </label>
+                                    {% if form.is_public.errors %}
+                                        <div class="text-danger small mt-1">{{ form.is_public.errors }}</div>
+                                    {% endif %}
+                                    <br>
+                                    <small class="text-muted">Public courses are visible to all users</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.price.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fas fa-dollar-sign text-primary"></i> Price
+                                </label>
+                                {{ form.price }}
+                                {% if form.price.errors %}
+                                    <div class="text-danger small mt-1">{{ form.price.errors }}</div>
+                                {% endif %}
+                                <small class="text-muted">Set 0.00 for free courses</small>
+                            </div>
+                        </div>
+
+                        <
+                        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                            <div>
+                                <button type="submit" class="btn btn-success px-4">
+                                    <i class="fas fa-save"></i>
+                                    {% if course %}Update Course{% else %}Create Course{% endif %}
+                                </button>
+                            </div>
+                            <div>
+                                {% if course %}
+                                    <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'course_list' %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="card mt-4 border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="fw-bold">
+                        <i class="fas fa-lightbulb text-warning"></i> Tips:
+                    </h6>
+                    <ul class="text-muted small mb-0">
+                        <li>Use a clear and descriptive title for your course</li>
+                        <li>Add the course code and instructor name for better organization</li>
+                        <li>Make your course public to share it with other students</li>
+                        <li>You can always edit these details later</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    .form-switch .form-check-input:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+</style>
+
+{% block extra_js %}
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstInput = document.querySelector('input[name="title"]');
+        if (firstInput) {
+            firstInput.focus();
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}
