@@ -1,5 +1,4 @@
 {% extends 'accounts/home.html' %}
-
 {% block content %}
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -7,8 +6,8 @@
             <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-header bg-gradient-primary rounded-top-4 py-3">
                     <h4 class="mb-0">
-                        <i class="fas fa-{% if note %}edit{% else %}plus-circle{% endif %} me-2"></i>
-                        {{ title }}
+                        <i class="fas fa-edit me-2"></i>
+                        Edit Note: {{ note.title }}
                     </h4>
                 </div>
 
@@ -56,7 +55,7 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-bold">
-                                <i class="fas fa-paperclip text-primary me-1"></i> Attach Files <span class="text-muted">(Multiple files allowed)</span>
+                                <i class="fas fa-paperclip text-primary me-1"></i> Attach New Files <span class="text-muted">(Multiple files allowed)</span>
                             </label>
 
                             <div class="drop-zone rounded-pill shadow-sm" id="dropZone">
@@ -73,9 +72,11 @@
                                         PDF, Word, TXT, MD, Images, ZIP
                                     </p>
                                 </div>
-
                                 <div id="fileList" class="file-list mt-3"></div>
                             </div>
+
+
+                            {{ form.files }}
 
 
                             <div class="text-center mt-3">
@@ -84,40 +85,43 @@
                                 </button>
                             </div>
 
+                            {% if form.files.errors %}
+                                <div class="text-danger small mt-1">{{ form.files.errors }}</div>
+                            {% endif %}
+                        </div>
 
-                            {{ form.files }}
 
-
-                            {% if note and note.files.all %}
-                                <div class="mt-3">
-                                    <label class="fw-bold">Current Files ({{ note.files.count }}):</label>
+                        {% if note.files.all %}
+                            <div class="mb-4">
+                                <hr class="my-4">
+                                <label class="fw-bold text-primary">
+                                    <i class="fas fa-folder-open me-1"></i> Current Files ({{ note.files.count }}):
+                                </label>
+                                <div class="mt-2">
                                     {% for file in note.files.all %}
-                                        <div class="alert alert-info rounded-pill d-flex justify-content-between align-items-center mt-1">
+                                        <div class="alert alert-info rounded-pill d-flex justify-content-between align-items-center mt-2">
                                             <span>
-                                                <i class="fas {{ file.get_file_icon }}"></i>
-                                                {{ file.original_filename }}
-                                                ({{ file.get_file_size_display }})
+                                                <i class="fas {{ file.get_file_icon }} fa-lg me-2"></i>
+                                                <strong>{{ file.original_filename }}</strong>
+                                                <span class="text-muted ms-2">({{ file.get_file_size_display }})</span>
+                                                <span class="badge bg-secondary ms-2">Uploaded: {{ file.uploaded_at|date:"Y-m-d H:i" }}</span>
                                             </span>
                                             <div>
                                                 <a href="{% url 'note_download' file.id %}"
                                                    class="btn btn-success btn-sm rounded-pill me-2">
                                                     <i class="fas fa-download"></i>
                                                 </a>
-                                                <a href="{% url 'note_delete' file.id %}"
-                                                   class="btn btn-danger btn-sm rounded-pill"
-                                                   onclick="return confirm('Delete this file?')">
+                                                <button type="button"
+                                                        class="btn btn-danger btn-sm rounded-pill"
+                                                        onclick="confirmDelete({{ file.id }}, '{{ file.original_filename }}')">
                                                     <i class="fas fa-trash"></i>
-                                                </a>
+                                                </button>
                                             </div>
                                         </div>
                                     {% endfor %}
                                 </div>
-                            {% endif %}
-
-                            {% if form.files.errors %}
-                                <div class="text-danger small mt-1">{{ form.files.errors }}</div>
-                            {% endif %}
-                        </div>
+                            </div>
+                        {% endif %}
 
                         <hr class="my-4">
 
@@ -135,9 +139,9 @@
                         <div class="d-flex gap-3 mt-4 pt-3 border-top">
                             <button type="submit" class="btn btn-success rounded-pill px-5 py-2 flex-grow-1">
                                 <i class="fas fa-save me-2"></i>
-                                {% if note %}Update Note{% else %}Create Note{% endif %}
+                                Update Note
                             </button>
-                            <a href="{% url 'note_list' %}" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                            <a href="{% url 'course_detail' note.course.id %}" class="btn btn-outline-secondary rounded-pill px-4 py-2">
                                 <i class="fas fa-times me-2"></i> Cancel
                             </a>
                         </div>
@@ -147,6 +151,16 @@
         </div>
     </div>
 </div>
+
+
+{% for file in note.files.all %}
+    <form id="deleteForm{{ file.id }}"
+          method="post"
+          action="{% url 'note_delete_file' file.id %}"
+          style="display: none;">
+        {% csrf_token %}
+    </form>
+{% endfor %}
 
 <style>
 
@@ -170,11 +184,9 @@
     .text-primary { color: #667eea; }
     .text-danger { color: #dc3545; }
     .text-success { color: #28a745; }
-    .text-warning { color: #ffc107; }
     .text-white { color: #fff; }
-    .text-dark { color: #212529; }
 
-    /* ===== UTILITY ===== */
+
     .mt-4 { margin-top: 1.5rem; }
     .mb-0 { margin-bottom: 0; }
     .mb-3 { margin-bottom: 1rem; }
@@ -191,6 +203,7 @@
     .pt-3 { padding-top: 1rem; }
     .me-1 { margin-right: 0.25rem; }
     .me-2 { margin-right: 0.5rem; }
+    .ms-2 { margin-left: 0.5rem; }
     .fw-bold { font-weight: 700; }
     .small { font-size: 0.875rem; }
     .border-0 { border: none; }
@@ -261,7 +274,7 @@
         min-height: 150px;
     }
 
-
+    /* ===== DROP ZONE ===== */
     .drop-zone {
         border: 3px dashed #667eea;
         background: #f8f9ff;
@@ -291,6 +304,7 @@
         flex-wrap: wrap;
         gap: 8px;
         justify-content: center;
+        min-height: 40px;
     }
     .file-tag {
         background: #e3f2fd;
@@ -308,7 +322,7 @@
         color: #d32f2f;
         font-weight: bold;
         margin-left: 5px;
-        font-size: 18px;
+        font-size: 20px;
         line-height: 1;
     }
     .file-tag .remove-file:hover {
@@ -438,13 +452,26 @@
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
-    /* ===== ANIMATION ===== */
+
+    .badge {
+        display: inline-block;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        border-radius: 50rem;
+    }
+    .badge-secondary { background: #6c757d; color: #fff; }
+
+
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ===== RESPONSIVE ===== */
+
     @media (max-width: 768px) {
         .col-md-10 { width: 100%; }
         .col-lg-8 { width: 100%; }
@@ -466,6 +493,14 @@
             font-size: 12px;
             padding: 4px 10px;
         }
+        .alert {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 10px;
+        }
+        .alert .d-flex {
+            justify-content: center;
+        }
     }
 
     @media (max-width: 576px) {
@@ -483,15 +518,31 @@
         .card-body {
             padding: 1rem;
         }
+        .alert {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 8px;
+        }
+        .alert span {
+            word-break: break-all;
+        }
     }
 </style>
 
-{% block extra_js %}
 <script>
+
+function confirmDelete(fileId, fileName) {
+    if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
+        document.getElementById('deleteForm' + fileId).submit();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Page loaded');
+
     const fileInput = document.getElementById('fileInput');
-    const customFileButton = document.getElementById('customFileButton');
     const dropZone = document.getElementById('dropZone');
+    const customButton = document.getElementById('customFileButton');
     const fileList = document.getElementById('fileList');
 
     if (!fileInput) {
@@ -502,41 +553,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedFiles = [];
 
 
-    if (customFileButton) {
-        customFileButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            fileInput.click();
-        });
-    }
+    function displayFiles() {
+        console.log('Displaying files:', selectedFiles.length);
 
-
-    fileInput.addEventListener('change', function() {
-        Array.from(this.files).forEach(file => {
-            const exists = selectedFiles.some(f =>
-                f.name === file.name &&
-                f.size === file.size &&
-                f.lastModified === file.lastModified
-            );
-            if (!exists) {
-                selectedFiles.push(file);
-            }
-        });
-        const dt = new DataTransfer();
-        selectedFiles.forEach(file => dt.items.add(file));
-        fileInput.files = dt.files;
-        showFiles(fileInput.files);
-    });
-
-
-
-
-
-
-    function showFiles(files) {
-        if (!fileList) return;
-
-        if (files.length === 0) {
+        if (selectedFiles.length === 0) {
             const dropContent = document.querySelector('.drop-zone-content');
             if (dropContent) dropContent.style.display = 'block';
             fileList.innerHTML = '';
@@ -547,70 +567,140 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dropContent) dropContent.style.display = 'none';
 
         let html = '';
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const icon = getFileIcon(file.name);
-            const size = formatFileSize(file.size);
+        selectedFiles.forEach((file, index) => {
+            const size = file.size < 1024 ? file.size + ' B' :
+                         file.size < 1024 * 1024 ? (file.size / 1024).toFixed(1) + ' KB' :
+                         (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+
+            let icon = 'fa-file';
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (['pdf'].includes(ext)) icon = 'fa-file-pdf';
+            else if (['doc', 'docx'].includes(ext)) icon = 'fa-file-word';
+            else if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) icon = 'fa-file-image';
+            else if (['zip', 'rar'].includes(ext)) icon = 'fa-file-archive';
+            else if (['txt', 'md'].includes(ext)) icon = 'fa-file-alt';
+
             html += `
                 <div class="file-tag">
                     <i class="fas ${icon}"></i>
                     <span>${file.name}</span>
                     <span class="text-muted">(${size})</span>
-                    <span class="remove-file" data-index="${i}">&times;</span>
+                    <span class="remove-file" data-index="${index}">×</span>
                 </div>
             `;
-        }
+        });
+
         fileList.innerHTML = html;
 
 
-        document.querySelectorAll('.remove-file').forEach(el => {
-            el.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
+        document.querySelectorAll('.remove-file').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const index = parseInt(this.dataset.index);
                 selectedFiles.splice(index, 1);
-                const dt = new DataTransfer();
-                selectedFiles.forEach(file => dt.items.add(file));
-                fileInput.files = dt.files;
-                showFiles(fileInput.files);
+                updateFileInput();
+                displayFiles();
             });
         });
     }
 
-    // Get file icon
-    function getFileIcon(filename) {
-        const ext = filename.split('.').pop().toLowerCase();
-        const icons = {
-            'pdf': 'fa-file-pdf',
-            'doc': 'fa-file-word',
-            'docx': 'fa-file-word',
-            'txt': 'fa-file-alt',
-            'md': 'fa-file-alt',
-            'jpg': 'fa-file-image',
-            'jpeg': 'fa-file-image',
-            'png': 'fa-file-image',
-            'gif': 'fa-file-image',
-            'zip': 'fa-file-archive',
-            'rar': 'fa-file-archive',
-            'ppt': 'fa-file-powerpoint',
-            'pptx': 'fa-file-powerpoint',
-            'xls': 'fa-file-excel',
-            'xlsx': 'fa-file-excel',
-        };
-        return icons[ext] || 'fa-file';
+
+    function updateFileInput() {
+        const dt = new DataTransfer();
+        selectedFiles.forEach(file => dt.items.add(file));
+        fileInput.files = dt.files;
+        console.log('Updated file input with', fileInput.files.length, 'files');
     }
 
 
-    function formatFileSize(bytes) {
-        if (bytes < 1024) return bytes + ' B';
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    if (customButton) {
+        customButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            fileInput.click();
+        });
     }
 
-    // Focus on title input
+
+    fileInput.addEventListener('change', function() {
+        console.log('File input changed');
+
+        Array.from(this.files).forEach(file => {
+            const exists = selectedFiles.some(f =>
+                f.name === file.name && f.size === file.size && f.lastModified === file.lastModified
+            );
+            if (!exists) {
+                selectedFiles.push(file);
+                console.log('Added:', file.name);
+            }
+        });
+
+        displayFiles();
+        updateFileInput();
+        this.value = '';
+    });
+
+
+    if (dropZone) {
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.remove('dragover');
+            console.log('Files dropped');
+
+            Array.from(e.dataTransfer.files).forEach(file => {
+                const exists = selectedFiles.some(f =>
+                    f.name === file.name && f.size === file.size && f.lastModified === file.lastModified
+                );
+                if (!exists) {
+                    selectedFiles.push(file);
+                    console.log('Added from drop:', file.name);
+                }
+            });
+
+            displayFiles();
+            updateFileInput();
+        });
+
+
+        dropZone.addEventListener('click', function() {
+            fileInput.click();
+        });
+    }
+
+
+    document.getElementById('noteForm').addEventListener('submit', function(e) {
+        console.log('Form submitting...');
+        console.log('Files in input:', fileInput.files.length);
+
+        updateFileInput();
+
+        if (fileInput.files.length > 0) {
+            console.log('Files being uploaded:');
+            for (let file of fileInput.files) {
+                console.log(' -', file.name, file.size);
+            }
+        }
+    });
+
+
     const firstInput = document.querySelector('input[name="title"]');
     if (firstInput) {
         firstInput.focus();
     }
+
+    console.log('✅ Script ready');
 });
 </script>
-{% endblock %}
 {% endblock %}
