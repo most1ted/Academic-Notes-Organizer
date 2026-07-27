@@ -1,163 +1,243 @@
+{% extends "accounts/home.html" %}
 
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Note Organizer — Keep Your Ideas in Order</title>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/home.css' %}">
-  <meta name="description" content="Organize your notes quickly and efficiently. Smart search, tags, and cross-device sync.">
-</head>
-<body>
-  <header class="site-header">
-    <nav class="navbar" role="navigation" aria-label="Main navigation">
-      <div class="container navbar-inner">
-        <a class="brand" href="#" aria-label="Note Organizer Home">
-          <svg class="brand-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="currentColor" d="M6 2h8l4 4v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
-          </svg>
-          <span class="brand-name">Note Organizer</span>
+{% block content %}
+
+<div class="hero">
+    <h1>Welcome {{ user.username }}</h1>
+
+    <p>
+        Organize your courses and notes in one place.
+    </p>
+
+    <div class="btn-group">
+
+        <a href="{% url 'course_create' %}" class="btn btn-light">
+            <i class="fas fa-plus-circle"></i>
+            New Course
         </a>
 
-        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle menu">
-          <span class="hamburger"></span>
-        </button>
+        <a href="{% url 'note_create' %}" class="btn btn-outline">
+            <i class="fas fa-sticky-note"></i>
+            New Note
+        </a>
 
-        <div id="nav-menu" class="nav-menu">
-          <ul class="nav-list">
-
-          </ul>
-          <div class="nav-ctas">
-              <a class="btn btn-primary" href="/accounts/logout/">log out</a>
-            <a class="btn btn-primary" href="/accounts/login/">Get started</a>
-          </div>
-        </div>
-      </div>
-    </nav>
-  </header>
-
-  <main>
-    <section class="hero">
-      <div class="container hero-inner">
-        <div class="hero-content reveal">
-          <h1 class="hero-title">Organize your thoughts. Find them instantly.</h1>
-          <p class="hero-sub">Note Organizer helps you capture ideas, tag them, and search across devices — fast and secure.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#signup">Start free</a>
-            <a class="btn btn-ghost" href="#how">See how it works</a>
-          </div>
-          <ul class="trust-list" aria-hidden="false">
-            <li>Trusted by teams</li>
-            <li>End-to-end encryption</li>
-            <li>Sync across devices</li>
-          </ul>
-        </div>
-
-        <div class="hero-visual" aria-hidden="true">
-
-          <div class="note-mock note-1">
-            <div class="note-header"></div>
-            <p class="note-line"></p>
-            <p class="note-line"></p>
-            <p class="note-line short"></p>
-          </div>
-
-          <div class="note-mock note-2">
-            <div class="note-header"></div>
-            <p class="note-line"></p>
-            <p class="note-line short"></p>
-          </div>
-
-          <div class="note-mock note-3">
-            <div class="note-header"></div>
-            <p class="note-line"></p>
-            <p class="note-line"></p>
-            <p class="note-line"></p>
-          </div>
-
-
-          <svg class="hero-shape" viewBox="0 0 600 200" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0,120 C150,200 350,40 600,120 L600,200 L0,200 Z" fill="rgba(99,102,241,0.08)"></path>
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <section id="features" class="section features">
-      <div class="container">
-        <h2 class="section-title reveal">Powerful features for better notes</h2>
-        <div class="features-grid">
-          <article class="feature-card reveal">
-            <svg class="feature-icon" width="40" height="40" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor" d="M5 3h14v2H5zM5 7h14v2H5zM5 11h14v6H5z"/>
-            </svg>
-            <h3>Fast capture</h3>
-            <p>Quickly jot down ideas with keyboard shortcuts and a minimal editor focused on speed.</p>
-          </article>
-
-          <article class="feature-card reveal">
-            <svg class="feature-icon" width="40" height="40" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor" d="M3 6h18v2H3zm0 5h12v2H3zm0 5h8v2H3z"/>
-            </svg>
-            <h3>Smart organization</h3>
-            <p>Tag, pin, and link notes together so you can build a network of knowledge.</p>
-          </article>
-
-          <article class="feature-card reveal">
-            <svg class="feature-icon" width="40" height="40" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zm0 7.5L4.5 7 12 3.5 19.5 7 12 9.5zM2 17.5V10l10 5 10-5v7.5L12 22 2 17.5z"/>
-            </svg>
-            <h3>Secure sync</h3>
-            <p>End-to-end encryption, with syncing across devices so your notes follow you.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="how" class="section how-it-works">
-      <div class="container">
-        <h2 class="section-title reveal">How it works</h2>
-        <div class="steps-grid">
-          <div class="step reveal">
-            <div class="step-number">1</div>
-            <h4>Capture quickly</h4>
-            <p>Use shortcuts or the quick add to capture ideas instantly.</p>
-          </div>
-          <div class="step reveal">
-            <div class="step-number">2</div>
-            <h4>Organize with tags</h4>
-            <p>Create tags and connect related notes for context.</p>
-          </div>
-          <div class="step reveal">
-            <div class="step-number">3</div>
-            <h4>Search & recall</h4>
-            <p>Powerful search surfaces notes even from years ago.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="signup" class="section cta-section">
-      <div class="container cta-inner reveal">
-        <h2>Ready to organize your notes?</h2>
-        <p>Start a free trial and get your ideas under control today.</p>
-        <a class="btn btn-primary btn-lg" href="#signup-form">Start free</a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <p>&copy; <span id="year"></span> Note Organizer · Designed with focus</p>
-      <div class="footer-links">
-
-      </div>
     </div>
-  </footer>
 
-  <script src="{% static 'js/home.js' %}" defer></script>
-</body>
-</html>
+</div>
+
+
+<div class="section-header">
+
+    <h2>
+        <i class="fas fa-book"></i>
+        My Courses ({{ courses.count }})
+    </h2>
+
+    <a class="view-all" href="{% url 'courses' %}">
+        View All →
+    </a>
+
+</div>
+
+
+<div class="grid">
+
+{% for course in courses %}
+
+<div class="course-card">
+
+<div class="course-icon">
+
+<i class="fas fa-book"></i>
+
+</div>
+
+{% if course.is_public %}
+
+<span class="public">
+
+Public
+
+</span>
+
+{% else %}
+
+<span class="private">
+
+Private
+
+</span>
+
+{% endif %}
+
+<h3 class="course-title">
+
+<a href="{% url 'course_detail' course.id %}">
+
+{{ course.title }}
+
+</a>
+
+</h3>
+
+<p class="course-desc">
+
+{{ course.description|truncatechars:80 }}
+
+</p>
+
+<div class="course-info">
+
+<span>
+
+<i class="fas fa-sticky-note"></i>
+
+{{ course.notes.count }} Notes
+
+</span>
+
+<span>
+
+<i class="fas fa-user"></i>
+
+{{ course.user.username }}
+
+</span>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<div class="empty-state">
+
+<i class="fas fa-book-open"></i>
+
+<h3>No Courses</h3>
+
+<p>Create your first course.</p>
+
+<a href="{% url 'course_create' %}" class="btn-primary">
+
+Create Course
+
+</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+
+<div class="section-header">
+
+<h2>
+
+<i class="fas fa-globe"></i>
+
+Public Notes ({{ public_notes.count }})
+
+</h2>
+
+<a href="{% url 'note_list' %}" class="view-all">
+
+View All →
+
+</a>
+
+</div>
+
+
+
+<div class="grid">
+
+{% for note in public_notes %}
+
+<div class="note-card">
+
+<h3 class="note-title">
+
+<a href="{% url 'note_detail' note.id %}">
+
+{{ note.title }}
+
+</a>
+
+</h3>
+
+<p class="note-content">
+
+{{ note.content|truncatechars:120 }}
+
+</p>
+
+{% if note.files.all %}
+
+<div class="note-files">
+
+{% for file in note.files.all %}
+
+<i class="fas {{ file.get_file_icon }}"></i>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+<div class="note-meta">
+
+<span>
+
+<i class="fas fa-book"></i>
+
+{{ note.course.title }}
+
+</span>
+
+<span>
+
+<i class="fas fa-user"></i>
+
+{{ note.user.username }}
+
+</span>
+
+<span>
+
+<i class="fas fa-eye"></i>
+
+{{ note.views_count }}
+
+</span>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<div class="empty-state">
+
+<i class="fas fa-sticky-note"></i>
+
+<h3>No Notes</h3>
+
+<p>No public notes found.</p>
+
+<a href="{% url 'note_create' %}" class="btn-primary">
+
+Create Note
+
+</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
