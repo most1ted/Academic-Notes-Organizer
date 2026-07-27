@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/Django-4.2-green.svg" alt="Django">
   <img src="https://img.shields.io/badge/PostgreSQL-16-blue.svg" alt="PostgreSQL">
   <img src="https://img.shields.io/badge/Docker-Ready-blue.svg" alt="Docker">
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
+  
 </p>
 
 ---
