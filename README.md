@@ -54,7 +54,7 @@ Managing scattered notes and files across a semester is painful. This project so
 | **Frontend** | HTML / CSS |
 | **Database** | PostgreSQL |
 | **Container** | Docker & Docker Compose |
-| **Editor** | Markdown |
+
 
                   
 
