@@ -1,3 +1,4 @@
+
 {% extends 'accounts/home.html' %}
 
 {% block content %}
@@ -92,7 +93,7 @@
 
                             {% if note and note.files.all %}
                                 <div class="mt-3">
-                                    <label class="fw-bold">Current Files:</label>
+                                    <label class="fw-bold">Current Files ({{ note.files.count }}):</label>
                                     {% for file in note.files.all %}
                                         <div class="alert alert-info rounded-pill d-flex justify-content-between align-items-center mt-1">
                                             <span>
@@ -100,11 +101,17 @@
                                                 {{ file.original_filename }}
                                                 ({{ file.get_file_size_display }})
                                             </span>
-                                            <a href="{% url 'note_delete_file' file.id %}"
-                                               class="btn btn-danger btn-sm rounded-pill"
-                                               onclick="return confirm('Delete this file?')">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
+                                            <div>
+                                                <a href="{% url 'note_download' file.id %}"
+                                                   class="btn btn-success btn-sm rounded-pill me-2">
+                                                    <i class="fas fa-download"></i>
+                                                </a>
+                                                <a href="{% url 'note_delete_file' file.id %}"
+                                                   class="btn btn-danger btn-sm rounded-pill"
+                                                   onclick="return confirm('Delete this file?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
                                         </div>
                                     {% endfor %}
                                 </div>
@@ -143,7 +150,6 @@
         </div>
     </div>
 </div>
-
 
 <style>
     .bg-gradient-primary {
@@ -205,6 +211,7 @@
         align-items: center;
         gap: 8px;
         border: 1px solid #90caf9;
+        animation: fadeIn 0.3s ease;
     }
 
     .file-tag .remove-file {
@@ -212,10 +219,13 @@
         color: #d32f2f;
         font-weight: bold;
         margin-left: 5px;
+        font-size: 18px;
+        line-height: 1;
     }
 
     .file-tag .remove-file:hover {
         color: #b71c1c;
+        transform: scale(1.2);
     }
 
     .btn {
@@ -263,7 +273,7 @@
     }
 
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
+        from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
@@ -275,117 +285,171 @@
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
 
-        const fileInput = document.getElementById('fileInput');
-        const customFileButton = document.getElementById('customFileButton');
-        const dropZone = document.getElementById('dropZone');
-        const fileList = document.getElementById('fileList');
-        const selectedFiles = [];
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ DOM loaded - File upload ready');
 
 
-        if (customFileButton && fileInput) {
-            customFileButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                fileInput.click();
-            });
-        }
+    const fileInput = document.getElementById('fileInput');
+    const customFileButton = document.getElementById('customFileButton');
+    const dropZone = document.getElementById('dropZone');
+    const fileList = document.getElementById('fileList');
+
+    console.log('fileInput:', fileInput);
+    console.log('customFileButton:', customFileButton);
+    console.log('dropZone:', dropZone);
+    console.log('fileList:', fileList);
+
+    if (!fileInput) {
+        console.error('❌ fileInput not found!');
+        return;
+    }
 
 
-        if (fileInput) {
-            fileInput.addEventListener('change', function() {
-                const files = Array.from(this.files);
-                files.forEach(file => {
-                    selectedFiles.push(file);
-                });
-                updateFileList();
-
-                this.value = '';
-            });
-        }
-
-
-        if (dropZone) {
-            dropZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('dragover');
-            });
-
-            dropZone.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                this.classList.remove('dragover');
-            });
-
-            dropZone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('dragover');
-
-                const files = Array.from(e.dataTransfer.files);
-                files.forEach(file => {
-                    selectedFiles.push(file);
-                });
-                updateFileList();
-            });
-        }
+    if (customFileButton) {
+        customFileButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('✅ Button clicked! Opening file dialog...');
+            fileInput.click();
+        });
+    } else {
+        console.log('❌ customFileButton not found!');
+    }
 
 
-        function updateFileList() {
-            if (!fileList) return;
+    fileInput.addEventListener('change', function() {
+        const files = this.files;
+        console.log('✅ File(s) selected! Count:', files.length);
 
-            if (selectedFiles.length === 0) {
-                fileList.innerHTML = '';
-                document.querySelector('.drop-zone-content').style.display = 'block';
-                return;
-            }
-
-            document.querySelector('.drop-zone-content').style.display = 'none';
-
-            let html = '';
-            selectedFiles.forEach((file, index) => {
-                const icon = getFileIcon(file.name);
-                html += `
-                    <div class="file-tag">
-                        <i class="fas ${icon}"></i>
-                        ${file.name}
-                        <span class="remove-file" onclick="removeFile(${index})">×</span>
-                    </div>
-                `;
-            });
-
-        window.removeFile = function(index) {
-            selectedFiles.splice(index, 1);
-            updateFileList();
-        };
-
-
-        function getFileIcon(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            const icons = {
-                'pdf': 'fa-file-pdf',
-                'doc': 'fa-file-word',
-                'docx': 'fa-file-word',
-                'txt': 'fa-file-alt',
-                'md': 'fa-file-alt',
-                'jpg': 'fa-file-image',
-                'jpeg': 'fa-file-image',
-                'png': 'fa-file-image',
-                'gif': 'fa-file-image',
-                'zip': 'fa-file-archive',
-                'rar': 'fa-file-archive',
-                'ppt': 'fa-file-powerpoint',
-                'pptx': 'fa-file-powerpoint',
-                'xls': 'fa-file-excel',
-                'xlsx': 'fa-file-excel',
-            };
-            return icons[ext] || 'fa-file';
-        }
-
-
-        const firstInput = document.querySelector('input[name="title"]');
-        if (firstInput) {
-            firstInput.focus();
+        if (files.length > 0) {
+            showFiles(files);
+        } else {
+            clearFiles();
         }
     });
+
+
+    if (dropZone) {
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.remove('dragover');
+            console.log('✅ Files dropped!');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+
+                const dataTransfer = new DataTransfer();
+                for (let i = 0; i < files.length; i++) {
+                    dataTransfer.items.add(files[i]);
+                }
+                fileInput.files = dataTransfer.files;
+                showFiles(files);
+            }
+        });
+    }
+
+
+    function showFiles(files) {
+        console.log('Showing files, count:', files.length);
+
+        if (!fileList) {
+            console.log('❌ fileList not found!');
+            return;
+        }
+
+        if (files.length === 0) {
+            clearFiles();
+            return;
+        }
+
+
+        const dropContent = document.querySelector('.drop-zone-content');
+        if (dropContent) {
+            dropContent.style.display = 'none';
+        }
+
+
+        let html = '';
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const icon = getFileIcon(file.name);
+            const size = formatFileSize(file.size);
+            html += `
+                <div class="file-tag">
+                    <i class="fas ${icon}"></i>
+                    <span>${file.name}</span>
+                    <span class="text-muted">(${size})</span>
+                </div>
+            `;
+        }
+
+        fileList.innerHTML = html;
+        console.log('✅ File list updated');
+    }
+
+
+    function clearFiles() {
+        if (fileList) {
+            fileList.innerHTML = '';
+        }
+        const dropContent = document.querySelector('.drop-zone-content');
+        if (dropContent) {
+            dropContent.style.display = 'block';
+        }
+    }
+
+
+    function getFileIcon(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        const icons = {
+            'pdf': 'fa-file-pdf',
+            'doc': 'fa-file-word',
+            'docx': 'fa-file-word',
+            'txt': 'fa-file-alt',
+            'md': 'fa-file-alt',
+            'jpg': 'fa-file-image',
+            'jpeg': 'fa-file-image',
+            'png': 'fa-file-image',
+            'gif': 'fa-file-image',
+            'zip': 'fa-file-archive',
+            'rar': 'fa-file-archive',
+            'ppt': 'fa-file-powerpoint',
+            'pptx': 'fa-file-powerpoint',
+            'xls': 'fa-file-excel',
+            'xlsx': 'fa-file-excel',
+        };
+        return icons[ext] || 'fa-file';
+    }
+
+
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+
+    const firstInput = document.querySelector('input[name="title"]');
+    if (firstInput) {
+        firstInput.focus();
+    }
+
+    console.log('✅ Script loaded successfully!');
+});
 </script>
 {% endblock %}
 {% endblock %}
