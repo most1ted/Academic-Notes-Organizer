@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="4f5443d7-b907-4380-9bde-9748623727a7" name="Changes" comment="readme changed again1" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="JavaScript File" />
+        <option value="HTML File" />
+        <option value="CSS File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;most1ted&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/most1ted/Academic-Notes-Organizer.git&quot;,
+    &quot;accountId&quot;: &quot;55c74c76-169f-441b-8ef5-8b62f02d753f&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="3GKMGfZQvouk7GTmTMLT61iVYVX" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Django Server.AcademicNotesOrganizer.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.pycharm.django.structure.promotion.once.per.project&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/GIGABYTE/Desktop/Academic Notes organizer/AcademicNotesOrganizer&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\GIGABYTE\Desktop\Academic Notes organizer\AcademicNotesOrganizer\templates\notes" />
+      <recent name="C:\Users\GIGABYTE\Desktop\Academic Notes organizer\AcademicNotesOrganizer\templates\course" />
+      <recent name="C:\Users\GIGABYTE\Desktop\Academic Notes organizer\AcademicNotesOrganizer\templates\accounts" />
+      <recent name="C:\Users\GIGABYTE\Desktop\Academic Notes organizer\AcademicNotesOrganizer\static\css" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="AcademicNotesOrganizer" type="Python.DjangoServer" factoryName="Django server">
+      <module name="AcademicNotesOrganizer" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="AcademicNotesOrganizer.settings" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PY-253.31033.139" />
+        <option value="bundled-python-sdk-2653e85de345-6d6dccd035ac-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.31033.139" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4f5443d7-b907-4380-9bde-9748623727a7" name="Changes" comment="" />
+      <created>1783715713306</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1783715713306</updated>
+      <workItem from="1783715714609" duration="6532000" />
+      <workItem from="1783763525156" duration="9559000" />
+      <workItem from="1784057104267" duration="590000" />
+      <workItem from="1784148208599" duration="4899000" />
+      <workItem from="1784382461712" duration="6349000" />
+      <workItem from="1784461812989" duration="11709000" />
+      <workItem from="1784579179672" duration="1416000" />
+      <workItem from="1784626727749" duration="2556000" />
+      <workItem from="1784835029764" duration="3347000" />
+      <workItem from="1784930276806" duration="2799000" />
+      <workItem from="1785007030065" duration="6128000" />
+      <workItem from="1785061179740" duration="776000" />
+      <workItem from="1785062006236" duration="3965000" />
+      <workItem from="1785142942706" duration="29869000" />
+    </task>
+    <task id="LOCAL-00001" summary="database changed">
+      <option name="closed" value="true" />
+      <created>1783716555342</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1783716555342</updated>
+    </task>
+    <task id="LOCAL-00002" summary="user app">
+      <option name="closed" value="true" />
+      <created>1783717073728</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1783717073728</updated>
+    </task>
+    <task id="LOCAL-00003" summary="user app forms">
+      <option name="closed" value="true" />
+      <created>1783717534071</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1783717534071</updated>
+    </task>
+    <task id="LOCAL-00004" summary="user app forms and urls">
+      <option name="closed" value="true" />
+      <created>1783717922850</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1783717922850</updated>
+    </task>
+    <task id="LOCAL-00005" summary="postgresql">
+      <option name="closed" value="true" />
+      <created>1783719626683</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1783719626683</updated>
+    </task>
+    <task id="LOCAL-00006" summary="fix urls and github pages">
+      <option name="closed" value="true" />
+      <created>1783722600299</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1783722600299</updated>
+    </task>
+    <task id="LOCAL-00007" summary="fix forms for login page">
+      <option name="closed" value="true" />
+      <created>1783774863427</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1783774863427</updated>
+    </task>
+    <task id="LOCAL-00008" summary="login complete">
+      <option name="closed" value="true" />
+      <created>1784152532415</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1784152532415</updated>
+    </task>
+    <task id="LOCAL-00009" summary="change user and course and  note model">
+      <option name="closed" value="true" />
+      <created>1784579818017</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1784579818017</updated>
+    </task>
+    <task id="LOCAL-00010" summary="fix notes">
+      <option name="closed" value="true" />
+      <created>1784933560668</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1784933560668</updated>
+    </task>
+    <task id="LOCAL-00011" summary="views for notes">
+      <option name="closed" value="true" />
+      <created>1785061328321</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1785061328321</updated>
+    </task>
+    <task id="LOCAL-00012" summary="views for notes">
+      <option name="closed" value="true" />
+      <created>1785061362761</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1785061362761</updated>
+    </task>
+    <task id="LOCAL-00013" summary="views for notes">
+      <option name="closed" value="true" />
+      <created>1785061399781</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1785061399781</updated>
+    </task>
+    <task id="LOCAL-00014" summary="edit forms and views for note list">
+      <option name="closed" value="true" />
+      <created>1785061678527</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1785061678527</updated>
+    </task>
+    <task id="LOCAL-00015" summary="notes html file">
+      <option name="closed" value="true" />
+      <created>1785062268572</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1785062268572</updated>
+    </task>
+    <task id="LOCAL-00016" summary="course html file">
+      <option name="closed" value="true" />
+      <created>1785062523798</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1785062523798</updated>
+    </task>
+    <task id="LOCAL-00017" summary="accounts html file">
+      <option name="closed" value="true" />
+      <created>1785062625959</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1785062625959</updated>
+    </task>
+    <task id="LOCAL-00018" summary="views for notes">
+      <option name="closed" value="true" />
+      <created>1785146989467</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1785146989467</updated>
+    </task>
+    <task id="LOCAL-00019" summary="notes create page">
+      <option name="closed" value="true" />
+      <created>1785154717792</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1785154717792</updated>
+    </task>
+    <task id="LOCAL-00020" summary="migration">
+      <option name="closed" value="true" />
+      <created>1785155743223</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1785155743223</updated>
+    </task>
+    <task id="LOCAL-00021" summary="accounts html file last change">
+      <option name="closed" value="true" />
+      <created>1785181094904</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1785181094904</updated>
+    </task>
+    <task id="LOCAL-00022" summary="courses html file last change">
+      <option name="closed" value="true" />
+      <created>1785181113023</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1785181113023</updated>
+    </task>
+    <task id="LOCAL-00023" summary="home html and css file last change">
+      <option name="closed" value="true" />
+      <created>1785181131122</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1785181131122</updated>
+    </task>
+    <task id="LOCAL-00024" summary="notes file last change">
+      <option name="closed" value="true" />
+      <created>1785181175505</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1785181175505</updated>
+    </task>
+    <task id="LOCAL-00025" summary="all files last changed">
+      <option name="closed" value="true" />
+      <created>1785181210515</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1785181210515</updated>
+    </task>
+    <task id="LOCAL-00026" summary="readme changed">
+      <option name="closed" value="true" />
+      <created>1785181554190</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1785181554190</updated>
+    </task>
+    <task id="LOCAL-00027" summary="readme changed again">
+      <option name="closed" value="true" />
+      <created>1785181602683</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1785181602683</updated>
+    </task>
+    <task id="LOCAL-00028" summary="readme changed again1">
+      <option name="closed" value="true" />
+      <created>1785181742649</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1785181742649</updated>
+    </task>
+    <task id="LOCAL-00029" summary="readme changed again1">
+      <option name="closed" value="true" />
+      <created>1785185256601</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1785185256601</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="database changed" />
+    <MESSAGE value="user app" />
+    <MESSAGE value="user app forms" />
+    <MESSAGE value="user app forms and urls" />
+    <MESSAGE value="postgresql" />
+    <MESSAGE value="fix urls and github pages" />
+    <MESSAGE value="fix forms for login page" />
+    <MESSAGE value="login complete" />
+    <MESSAGE value="change user and course and  note model" />
+    <MESSAGE value="fix notes" />
+    <MESSAGE value="edit forms and views for note list" />
+    <MESSAGE value="notes html file" />
+    <MESSAGE value="course html file" />
+    <MESSAGE value="accounts html file" />
+    <MESSAGE value="views for notes" />
+    <MESSAGE value="notes create page" />
+    <MESSAGE value="migration" />
+    <MESSAGE value="accounts html file last change" />
+    <MESSAGE value="courses html file last change" />
+    <MESSAGE value="home html and css file last change" />
+    <MESSAGE value="notes file last change" />
+    <MESSAGE value="all files last changed" />
+    <MESSAGE value="readme changed" />
+    <MESSAGE value="readme changed again" />
+    <MESSAGE value="readme changed again1" />
+    <option name="LAST_COMMIT_MESSAGE" value="readme changed again1" />
+  </component>
+</project>
