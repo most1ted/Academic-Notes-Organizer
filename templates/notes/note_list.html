@@ -4,6 +4,7 @@
 {% block content %}
 <div class="container mt-4">
 
+
     <div class="row mb-4">
         <div class="col-12">
             <div class="card shadow-sm border-0 rounded-4">
@@ -12,7 +13,7 @@
                         <div>
                             <h3 class="mb-0">
                                 <i class="fas fa-sticky-note text-primary me-2"></i>
-                                My Notes
+                                All Notes
                             </h3>
                             <p class="text-muted mb-0 mt-1">
                                 <i class="fas fa-file me-1"></i>
@@ -29,7 +30,7 @@
             </div>
         </div>
     </div>
-    <p></p>
+
 
     <div class="row mb-4">
         <div class="col-md-3 col-6">
@@ -55,7 +56,7 @@
                 <div class="card-body text-center">
                     <i class="fas fa-lock fa-2x text-warning"></i>
                     <h4 class="mt-2 mb-0">{{ private_notes }}</h4>
-                    <small class="text-muted">Private</small>
+                    <small class="text-muted">Private (Mine)</small>
                 </div>
             </div>
         </div>
@@ -115,7 +116,7 @@
             {% for note in notes %}
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card note-card h-100 border-0 rounded-4 shadow-sm">
-                        <!-- Card Header -->
+
                         <div class="card-header bg-transparent border-0 pt-3 px-3">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="note-title-wrapper">
@@ -128,6 +129,14 @@
                                         <i class="fas fa-book me-1"></i>
                                         {{ note.course.title|truncatechars:20 }}
                                     </small>
+
+                                    {% if note.user != request.user %}
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-user me-1"></i>
+                                            By: {{ note.user.username }}
+                                        </small>
+                                    {% endif %}
                                 </div>
                                 <div>
                                     {% if note.is_public %}
@@ -148,19 +157,26 @@
                             <p class="card-text text-muted note-preview">
                                 {{ note.content|truncatechars:120 }}
                             </p>
-
-
-
                         </div>
 
-                        <!-- Card Footer -->
+
                         <div class="card-footer bg-transparent border-0 px-3 pb-3">
                             <div class="d-flex justify-content-between align-items-center">
-
+                                <div>
+                                    <small class="text-muted">
+                                        <i class="fas fa-eye me-1"></i>
+                                        {{ note.views_count }}
+                                    </small>
+                                    <small class="text-muted ms-2">
+                                        <i class="fas fa-clock me-1"></i>
+                                        {{ note.created_at|date:"Y-m-d" }}
+                                    </small>
+                                </div>
                                 <div>
                                     <a href="{% url 'note_detail' note.id %}" class="btn btn-sm btn-outline-primary rounded-pill">
                                         <i class="fas fa-eye me-1"></i> View
                                     </a>
+
                                     {% if note.user == request.user %}
                                         <a href="{% url 'note_edit' note.id %}" class="btn btn-sm btn-outline-warning rounded-pill">
                                             <i class="fas fa-edit"></i>
@@ -183,7 +199,7 @@
                             {% if search_query or course_filter %}
                                 Try changing your search or filter criteria.
                             {% else %}
-                                You haven't created any notes yet.
+                                No notes available. Create your first note!
                             {% endif %}
                         </p>
                         <a href="{% url 'note_create' %}" class="btn btn-primary rounded-pill px-4 mt-2">
@@ -203,7 +219,8 @@
                     <ul class="pagination justify-content-center">
                         {% if notes.has_previous %}
                             <li class="page-item">
-                                <a class="page-link rounded-pill me-2" href="?page={{ notes.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if course_filter %}&course={{ course_filter }}{% endif %}">
+                                <a class="page-link rounded-pill me-2"
+                                   href="?page={{ notes.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if course_filter %}&course={{ course_filter }}{% endif %}">
                                     <i class="fas fa-chevron-left"></i>
                                 </a>
                             </li>
@@ -216,7 +233,8 @@
                                 </li>
                             {% elif num > notes.number|add:'-3' and num < notes.number|add:'3' %}
                                 <li class="page-item">
-                                    <a class="page-link rounded-pill me-2" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if course_filter %}&course={{ course_filter }}{% endif %}">
+                                    <a class="page-link rounded-pill me-2"
+                                       href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if course_filter %}&course={{ course_filter }}{% endif %}">
                                         {{ num }}
                                     </a>
                                 </li>
@@ -225,7 +243,8 @@
 
                         {% if notes.has_next %}
                             <li class="page-item">
-                                <a class="page-link rounded-pill" href="?page={{ notes.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if course_filter %}&course={{ course_filter }}{% endif %}">
+                                <a class="page-link rounded-pill"
+                                   href="?page={{ notes.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if course_filter %}&course={{ course_filter }}{% endif %}">
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
                             </li>
@@ -263,7 +282,6 @@
     .text-dark { color: #212529; }
     .text-decoration-none { text-decoration: none; }
 
-    /* ===== UTILITY ===== */
     .mt-4 { margin-top: 1.5rem; }
     .mb-0 { margin-bottom: 0; }
     .mb-1 { margin-bottom: 0.25rem; }
@@ -276,7 +294,6 @@
     .p-4 { padding: 1.5rem; }
     .px-3 { padding-left: 1rem; padding-right: 1rem; }
     .px-4 { padding-left: 1.5rem; padding-right: 1.5rem; }
-    .px-5 { padding-left: 3rem; padding-right: 3rem; }
     .pt-3 { padding-top: 1rem; }
     .pb-3 { padding-bottom: 1rem; }
     .py-5 { padding-top: 3rem; padding-bottom: 3rem; }
@@ -298,7 +315,6 @@
     .align-items-center { align-items: center; }
     .align-items-start { align-items: flex-start; }
     .flex-wrap { flex-wrap: wrap; }
-    .flex-grow-1 { flex-grow: 1; }
     .gap-2 { gap: 0.5rem; }
 
     .row {
@@ -321,7 +337,6 @@
         padding: 0 0.25rem;
     }
 
-
     .card {
         background: #fff;
         border-radius: 20px;
@@ -341,9 +356,7 @@
         margin-bottom: 0.5rem;
     }
     .card-text { margin-bottom: 0.5rem; }
-
     .bg-transparent { background: transparent; }
-
 
     .note-card {
         transition: all 0.3s ease;
@@ -376,7 +389,6 @@
         min-height: 72px;
     }
 
-
     .stat-card {
         transition: all 0.3s ease;
         background: white;
@@ -397,7 +409,6 @@
     .stat-card:nth-child(3) { animation-delay: 0.2s; }
     .stat-card:nth-child(4) { animation-delay: 0.3s; }
 
-
     .badge {
         display: inline-block;
         padding: 0.35em 0.65em;
@@ -410,7 +421,6 @@
     }
     .badge-success { background: #28a745; color: #fff; }
     .badge-warning { background: #ffc107; color: #212529; }
-
 
     .btn {
         display: inline-block;
@@ -459,22 +469,6 @@
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
-
-    .file-info {
-        background: #f8f9fa;
-        padding: 8px 12px;
-        border-radius: 10px;
-    }
-    .file-icons {
-        display: flex;
-        gap: 4px;
-        flex-wrap: wrap;
-    }
-    .file-icons i {
-        font-size: 0.9rem;
-    }
-
-
     .input-group {
         display: flex;
         align-items: center;
@@ -516,8 +510,35 @@
         border-right: none;
     }
 
-
-
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        justify-content: center;
+    }
+    .page-item {
+        display: inline-block;
+    }
+    .page-link {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        color: #4a5568;
+        background: #f7fafc;
+        border: none;
+        border-radius: 50rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .page-link:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
 
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
@@ -527,7 +548,50 @@
     .note-card:nth-child(3) { animation-delay: 0.2s; }
     .note-card:nth-child(4) { animation-delay: 0.3s; }
 
+    @media (max-width: 768px) {
+        .col-md-3 { width: 50%; }
+        .col-md-4 { width: 100%; }
+        .col-md-5 { width: 100%; }
+        .col-md-6 { width: 100%; }
+        .col-lg-4 { width: 100%; }
+        .stat-card .card-body { padding: 0.75rem; }
+        .stat-card h4 { font-size: 1.25rem; }
+        .stat-card i { font-size: 1.5rem; }
+        .card-header .d-flex {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .card-header .d-flex .btn {
+            width: 100%;
+        }
+        .row.g-2 {
+            flex-direction: column;
+        }
+        .row.g-2 [class*="col-"] {
+            width: 100%;
+            padding: 0.25rem 0;
+        }
+        .input-group .form-control {
+            border-radius: 0 50rem 50rem 0;
+        }
+    }
 
-
+    @media (max-width: 576px) {
+        .note-card .card-footer .d-flex {
+            flex-direction: column;
+            gap: 10px;
+            align-items: stretch;
+        }
+        .note-card .card-footer .d-flex > div:last-child {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        .col-6 { width: 100%; }
+        .pagination .page-link {
+            padding: 0.35rem 0.7rem;
+            font-size: 0.8rem;
+        }
+    }
 </style>
 {% endblock %}

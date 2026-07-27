@@ -13,7 +13,7 @@ from django.http import  HttpResponse
 from django.db.models import Q
 from .forms import NoteForm
 from .models import Note, Course, User, NoteFile
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def accounts(request):
@@ -122,18 +122,57 @@ def note_delete(request, note_id):
 
     return render(request, 'notes/note_confirm_delete.html', {'note': note})
 
+@login_required
 def course_list(request):
-    my_courses =Course.objects.filter(user=request.user).order_by('-created_at')
+
+
+
+    my_courses = Course.objects.filter(user=request.user).order_by('-created_at')
+
+
     all_courses = Course.objects.filter(
         is_public=True
     ).exclude(
         user=request.user
     ).order_by('-created_at')
-    context ={
-        'my_courses':my_courses,
-        'all_courses':all_courses
 
+
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        my_courses = my_courses.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(code__icontains=search_query)
+        )
+        all_courses = all_courses.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(code__icontains=search_query)
+        )
+
+
+    status_filter = request.GET.get('status', '')
+    if status_filter == 'public':
+        my_courses = my_courses.filter(is_public=True)
+    elif status_filter == 'private':
+        my_courses = my_courses.filter(is_public=False)
+
+
+    stats = {
+        'total_my_courses': Course.objects.filter(user=request.user).count(),
+        'total_public': Course.objects.filter(is_public=True).count(),
+        'total_private': Course.objects.filter(is_public=False, user=request.user).count(),
+        'total_all_courses': Course.objects.count(),
     }
+
+    context = {
+        'my_courses': my_courses,
+        'all_courses': all_courses,
+        'stats': stats,
+        'search_query': search_query,
+        'status_filter': status_filter,
+    }
+
     return render(request, 'course/course_list.html', context)
 
 @login_required
@@ -246,21 +285,36 @@ def course_detail(request, course_id):
 
     return render(request, 'course/course_detail.html', context)
 
-
-
+@login_required
 def note_list(request):
-    notes = Note.objects.filter(user=request.user).order_by('-created_at')
-    search_query = request.GET.get('search', '')
+
+    notes = Note.objects.filter(
+        Q(is_public=True) | Q(user=request.user)
+    ).order_by('-created_at')
+
+
+    search_query = request.GET.get('search', '').strip()
     if search_query:
         notes = notes.filter(
             Q(title__icontains=search_query) |
             Q(content__icontains=search_query)
-
         )
+
 
     course_filter = request.GET.get('course', '')
     if course_filter and course_filter.isdigit():
         notes = notes.filter(course_id=int(course_filter))
+
+
+    paginator = Paginator(notes, 12)
+    page = request.GET.get('page', 1)
+
+    try:
+        notes_page = paginator.page(page)
+    except PageNotAnInteger:
+        notes_page = paginator.page(1)
+    except EmptyPage:
+        notes_page = paginator.page(paginator.num_pages)
 
 
     courses = Course.objects.filter(user=request.user)
@@ -268,11 +322,11 @@ def note_list(request):
 
     total_notes = notes.count()
     public_notes = notes.filter(is_public=True).count()
-    private_notes = notes.filter(is_public=False).count()
+    private_notes = notes.filter(is_public=False, user=request.user).count()
     notes_with_files = notes.filter(files__isnull=False).distinct().count()
 
     context = {
-        'notes': notes,
+        'notes': notes_page,
         'courses': courses,
         'search_query': search_query,
         'course_filter': course_filter,

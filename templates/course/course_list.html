@@ -34,6 +34,56 @@
     </div>
 
 
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-3">
+                    <form method="get" action="{% url 'courses' %}" class="row g-2 align-items-center">
+                        <!-- Search -->
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text"
+                                       name="search"
+                                       class="form-control border-start-0"
+                                       placeholder="Search public courses by title, code, description..."
+                                       value="{{ search_query|default:'' }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <select name="status" class="form-select">
+                                <option value="">All Courses (My Courses)</option>
+                                <option value="public" {% if status_filter == 'public' %}selected{% endif %}>
+                                    Public Only
+                                </option>
+                                <option value="private" {% if status_filter == 'private' %}selected{% endif %}>
+                                    Private Only
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary rounded-pill w-100">
+                                    <i class="fas fa-filter me-2"></i> Filter
+                                </button>
+                                {% if search_query or status_filter %}
+                                    <a href="{% url 'courses' %}" class="btn btn-outline-secondary rounded-pill">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div class="mb-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4>
@@ -67,9 +117,14 @@
                         <p class="card-text text-muted small">
                             {{ course.description|truncatewords:15|default:"No description" }}
                         </p>
+                        {% if course.code %}
+                            <small class="text-muted d-block">
+                                <i class="fas fa-tag me-1"></i> Code: {{ course.code }}
+                            </small>
+                        {% endif %}
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <span class="badge badge-info">
-                                <i class="fas fa-file-alt"></i> {{ course.get_notes_count }} Notes
+                                <i class="fas fa-file-alt"></i> {{ course.notes.count }} Notes
                             </span>
                             <small class="text-muted">
                                 <i class="fas fa-calendar"></i> {{ course.created_at|date:"Y-m-d" }}
@@ -133,9 +188,14 @@
                         <p class="card-text text-muted small">
                             {{ course.description|truncatewords:15|default:"No description" }}
                         </p>
+                        {% if course.code %}
+                            <small class="text-muted d-block">
+                                <i class="fas fa-tag me-1"></i> Code: {{ course.code }}
+                            </small>
+                        {% endif %}
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <span class="badge badge-info">
-                                <i class="fas fa-file-alt"></i> {{ course.get_notes_count }} Notes
+                                <i class="fas fa-file-alt"></i> {{ course.notes.count }} Notes
                             </span>
                             <small class="text-muted">
                                 <i class="fas fa-user"></i> {{ course.user.username }}
@@ -158,7 +218,13 @@
         {% else %}
             <div class="alert alert-secondary text-center">
                 <i class="fas fa-globe fa-2x text-muted"></i>
-                <p class="mt-2">No public courses available from other users.</p>
+                <p class="mt-2">
+                    {% if search_query %}
+                        No public courses found matching "<strong>{{ search_query }}</strong>".
+                    {% else %}
+                        No public courses available from other users.
+                    {% endif %}
+                </p>
                 <p class="text-muted small">Make your courses public to share with the community!</p>
             </div>
         {% endif %}
@@ -193,7 +259,7 @@
     .text-success { color: #28a745; }
     .text-white { color: #fff; }
 
-
+    /* ===== UTILITY ===== */
     .mt-4 { margin-top: 1.5rem; }
     .mb-0 { margin-bottom: 0; }
     .mb-2 { margin-bottom: 0.5rem; }
@@ -202,14 +268,17 @@
     .mb-5 { margin-bottom: 3rem; }
     .mt-2 { margin-top: 0.5rem; }
     .mt-4 { margin-top: 1.5rem; }
+    .me-1 { margin-right: 0.25rem; }
     .me-2 { margin-right: 0.5rem; }
     .ms-2 { margin-left: 0.5rem; }
     .px-4 { padding-left: 1.5rem; padding-right: 1.5rem; }
     .d-flex { display: flex; }
     .justify-content-between { justify-content: space-between; }
     .align-items-center { align-items: center; }
+    .align-items-start { align-items: flex-start; }
     .flex-grow-1 { flex-grow: 1; }
     .gap-1 { gap: 0.25rem; }
+    .gap-2 { gap: 0.5rem; }
     .rounded-pill { border-radius: 50rem; }
     .rounded-4 { border-radius: 20px; }
     .border-0 { border: none; }
@@ -222,6 +291,8 @@
     }
     .small { font-size: 0.875rem; }
     .text-center { text-align: center; }
+    .w-100 { width: 100%; }
+    .d-block { display: block; }
 
 
     .badge {
@@ -240,7 +311,6 @@
     .badge-secondary { background: #6c757d; color: #fff; }
     .badge-info { background: #17a2b8; color: #fff; }
     .badge-primary { background: #667eea; color: #fff; }
-    .badge-success i, .badge-secondary i, .badge-info i { margin-left: 4px; }
 
 
     .btn {
@@ -319,6 +389,7 @@
     .btn-outline-secondary:hover {
         background: #6c757d;
         color: #fff;
+        transform: translateY(-2px);
     }
 
 
@@ -387,6 +458,66 @@
     .alert p { margin-top: 0.5rem; }
 
 
+    .input-group {
+        display: flex;
+        align-items: center;
+    }
+    .input-group-text {
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        background: #fff;
+        border: 2px solid #e0e0e0;
+        border-right: none;
+        border-radius: 50rem 0 0 50rem;
+    }
+    .input-group .form-control {
+        border-radius: 0 50rem 50rem 0;
+        border-left: none;
+    }
+    .form-control, .form-select {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #212529;
+        background: #fff;
+        border: 2px solid #e0e0e0;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        outline: 0;
+    }
+    .form-control.border-start-0 {
+        border-left: none;
+    }
+    .border-end-0 {
+        border-right: none;
+    }
+
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -0.5rem;
+    }
+    .col-12 { width: 100%; padding: 0 0.5rem; }
+    .col-md-3 { width: 25%; padding: 0 0.5rem; }
+    .col-md-4 { width: 33.3333%; padding: 0 0.5rem; }
+    .col-md-5 { width: 41.6667%; padding: 0 0.5rem; }
+
+    .g-2 {
+        margin: 0 -0.25rem;
+    }
+    .g-2 > [class*="col-"] {
+        padding: 0 0.25rem;
+    }
+
+    /* ===== ANIMATION ===== */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
@@ -399,11 +530,35 @@
     .course-card:nth-child(4) { animation-delay: 0.3s; }
 
 
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
+        .col-md-3 { width: 50%; }
+        .col-md-4 { width: 100%; }
+        .col-md-5 { width: 100%; }
+        .g-2 {
+            flex-direction: column;
+        }
+        .g-2 [class*="col-"] {
+            width: 100%;
+            padding: 0.25rem 0;
+        }
+        .d-flex.gap-2 {
+            flex-direction: column;
+        }
         .stat-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 576px) {
+        .stat-grid { grid-template-columns: 1fr; }
         .course-grid { grid-template-columns: 1fr; }
         .d-flex.justify-content-between { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
         .text-truncate { max-width: 100px; }
+        .card-footer .d-flex.gap-1 {
+            flex-wrap: wrap;
+        }
+        .card-footer .d-flex.gap-1 .btn {
+            flex: 1;
+            min-width: 60px;
+        }
     }
     hr { margin: 2rem 0; border: 0; border-top: 1px solid #dee2e6; }
 </style>
