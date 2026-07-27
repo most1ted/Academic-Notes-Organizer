@@ -19,7 +19,7 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse
 from django.db.models import Q
-from .models import Course, Note
+from .models import Course, Note,Note
 from .forms import NoteForm
 
 
@@ -33,7 +33,7 @@ def log_out(request):
 User = get_user_model()
 
 class Login(AccessMixin, View):
-    template_name = 'login.html'
+    template_name = 'accounts/login.html'
     form_class = LoginForm
     success_url = reverse_lazy('accounts')
 
@@ -99,7 +99,13 @@ class Login(AccessMixin, View):
 
 @login_required
 def note_create(request):
-
+    course_id = request.GET.get('course')
+    initial_course = None
+    if course_id:
+        try:
+            initial_course = Course.objects.get(id=course_id, user=request.user)
+        except Course.DoesNotExist:
+            pass
     if request.method == 'POST':
 
         form = NoteForm(
@@ -112,7 +118,17 @@ def note_create(request):
             note = form.save(commit=False)
             note.user = request.user
             note.save()
-
+            files = request.FILES.getlist('files')
+            file_count = 0
+            for file in files:
+                try:
+                    Note.objects.create(
+                        note=note,
+                        file=file
+                    )
+                    file_count += 1
+                except Exception as e:
+                    print(f"Error saving file: {e}")
             messages.success(
                 request,
                 f'✅ Note "{note.title}" created successfully in "{note.course.title}"!'
@@ -185,8 +201,18 @@ def note_delete(request, note_id):
     return render(request, 'notes/note_confirm_delete.html', {'note': note})
 
 def course_list(request):
-    courses = Course.objects.all()
-    return render(request, 'course/course_list.html', {'courses':courses})
+    my_courses =Course.objects.filter(user=request.user).order_by('-created_at')
+    all_courses = Course.objects.filter(
+        is_public=True
+    ).exclude(
+        user=request.user
+    ).order_by('-created_at')
+    context ={
+        'my_courses':my_courses,
+        'all_courses':all_courses
+
+    }
+    return render(request, 'course/course_list.html', context)
 
 @login_required
 def course_create(request):
@@ -206,19 +232,35 @@ def course_create(request):
 
 
 @login_required
-def course_edit(request,course_id):
-    course = get_object_or_404(Course,id=course_id,user=request.user)
+def course_edit(request, course_id):
+
+
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+
     if request.method == 'POST':
-        form = CourseForm(request.POST,request.FILES)
+
+        form = CourseForm(request.POST, instance=course)
+
         if form.is_valid():
-            course = form.save(commit=False)
-            course.user = request.user
-            course.save()
-            messages.success(request, 'Course created successfully')
-            return redirect('courses',course_id=course.id)
+
+            form.save()
+            messages.success(request, f'✅ Course "{course.title}" updated successfully!')
+            return redirect('course_detail', course_id=course.id)
         else:
-            form = CourseForm(instance=course)
-        return render(request,'course_form.html',{'form':form})
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'course/courses.html', {
+                'form': form,
+                'course': course,
+                'title': 'Edit Course'
+            })
+
+
+    form = CourseForm(instance=course)
+    return render(request, 'course/courses.html', {
+        'form': form,
+        'course': course,
+        'title': 'Edit Course'
+    })
 @login_required
 def course_delete(request, course_id):
     course = get_object_or_404(Course, id=course_id, user=request.user)
@@ -237,10 +279,45 @@ def course_delete(request, course_id):
 
 
     return render(request, 'course/course_delete.html', {'course': course})
-def course_detail(request,course_id):
-    course = get_object_or_404(Course,id=course_id,user=request.user)
-    notes = course.notes.all()
-    return render(request,'course/course_detail.html',{'course':course,'notes':notes})
+
+
+@login_required
+def course_detail(request, course_id):
+
+    course = get_object_or_404(Course, id=course_id)
+
+
+    is_owner = (course.user == request.user)
+
+
+    if not course.is_public and not is_owner:
+        messages.error(request, "You don't have permission to view this course.")
+        return redirect('course_list')
+
+
+    if is_owner:
+        notes = course.notes.all().order_by('-created_at')
+    else:
+        notes = course.notes.filter(is_public=True).order_by('-created_at')
+
+
+
+
+    stats = {
+        'total_notes': notes.count(),
+
+        'public_notes': notes.filter(is_public=True).count(),
+        'private_notes': notes.filter(is_public=False).count(),
+    }
+
+    context = {
+        'course': course,
+        'notes': notes,
+        'stats': stats,
+        'is_owner': is_owner,
+    }
+
+    return render(request, 'course/course_detail.html', context)
 
 
 
