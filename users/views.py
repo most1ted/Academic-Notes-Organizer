@@ -1,26 +1,18 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect,get_object_or_404
 from django.views import View
-from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
-from users.forms import LoginForm, NoteForm
-from django.http import HttpResponseRedirect, Http404,HttpResponse
+from django.contrib.auth.mixins import AccessMixin
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.contrib.auth import authenticate, login, logout
-from .forms import RegisterForm,LoginForm,NoteForm,CourseForm
-from django.contrib import messages
+from django.contrib.auth import  login, logout
+from .forms import RegisterForm,LoginForm,CourseForm
 from django.contrib.auth import get_user_model
-from django.db.models import Q
-from .models import Note,Course
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponse
+from django.http import  HttpResponse
 from django.db.models import Q
-from .models import Course, Note,Note
 from .forms import NoteForm
+from .models import Note, Course, User, NoteFile
 
 
 @login_required
@@ -35,7 +27,7 @@ User = get_user_model()
 class Login(AccessMixin, View):
     template_name = 'accounts/login.html'
     form_class = LoginForm
-    success_url = reverse_lazy('accounts')
+    success_url = reverse_lazy('main')
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -85,7 +77,7 @@ class Login(AccessMixin, View):
                 new_user.save()
 
                 login(request, new_user)
-                return redirect('accounts')
+                return redirect('main')
 
 
 
@@ -97,76 +89,6 @@ class Login(AccessMixin, View):
         return HttpResponseRedirect(self.success_url)
 
 
-@login_required
-def note_create(request):
-    course_id = request.GET.get('course')
-    initial_course = None
-    if course_id:
-        try:
-            initial_course = Course.objects.get(id=course_id, user=request.user)
-        except Course.DoesNotExist:
-            pass
-    if request.method == 'POST':
-
-        form = NoteForm(
-            request=request,
-            data=request.POST,
-            files=request.FILES
-        )
-
-        if form.is_valid():
-            note = form.save(commit=False)
-            note.user = request.user
-            note.save()
-            files = request.FILES.getlist('files')
-            file_count = 0
-            for file in files:
-                try:
-                    Note.objects.create(
-                        note=note,
-                        file=file
-                    )
-                    file_count += 1
-                except Exception as e:
-                    print(f"Error saving file: {e}")
-            messages.success(
-                request,
-                f'✅ Note "{note.title}" created successfully in "{note.course.title}"!'
-            )
-            return redirect('note_list', )
-        else:
-            messages.error(request, 'Please correct the errors below.')
-            return render(request, 'notes/notes.html', {
-                'form': form,
-                'title': 'Create New Note'
-            })
-
-
-    form = NoteForm(request=request)
-    return render(request, 'notes/notes.html', {
-        'form': form,
-        'title': 'Create New Note'
-    })
-
-
-@login_required
-def note_edit(request,note_id):
-    note = get_object_or_404(Note,id=note_id,user=request.user)
-
-    if request.method == 'POST':
-        form = NoteForm(request.POST,request.FILES)
-        if form.is_valid():
-            if 'file' in request.FILES:
-                if note.file:
-                    note.file.delete(save=False)
-            note.save()
-            return redirect('course',course_id=note.course.id)
-        else:
-            form = NoteForm(instance=note)
-        return render(request,'notes/note_edit.html',{
-        'form':form,
-        'note':note,
-    })
 
 
 @login_required
@@ -191,10 +113,10 @@ def note_delete(request, note_id):
 
 
             note.delete()
-            messages.success(request, f'✅ Note "{note_title}" deleted successfully!')
+            messages.success(request, f' Note "{note_title}" deleted successfully!')
 
         except Exception as e:
-            messages.error(request, f'❌ Error deleting note: {str(e)}')
+            messages.error(request, f' Error deleting note: {str(e)}')
 
         return redirect('course_detail', course_id=course_id)
 
@@ -261,6 +183,7 @@ def course_edit(request, course_id):
         'course': course,
         'title': 'Edit Course'
     })
+
 @login_required
 def course_delete(request, course_id):
     course = get_object_or_404(Course, id=course_id, user=request.user)
@@ -270,16 +193,20 @@ def course_delete(request, course_id):
 
 
         for note in course.notes.all():
-            if note.file:
-                note.file.delete(save=False)
+            for file_obj in note.files.all():
+                if file_obj.file:
+                    try:
+                        file_obj.file.delete(save=False)
+                    except Exception as e:
+                        print(f"Error deleting file: {e}")
+                file_obj.delete()
+            note.delete()
 
         course.delete()
-        messages.success(request, f'✅ Course "{course_title}" deleted successfully!')
+        messages.success(request, f' Course "{course_title}" deleted successfully!')
         return redirect('courses')
 
-
     return render(request, 'course/course_delete.html', {'course': course})
-
 
 @login_required
 def course_detail(request, course_id):
@@ -327,8 +254,8 @@ def note_list(request):
     if search_query:
         notes = notes.filter(
             Q(title__icontains=search_query) |
-            Q(content__icontains=search_query) |
-            Q(summary__icontains=search_query)
+            Q(content__icontains=search_query)
+
         )
 
     course_filter = request.GET.get('course', '')
@@ -342,7 +269,7 @@ def note_list(request):
     total_notes = notes.count()
     public_notes = notes.filter(is_public=True).count()
     private_notes = notes.filter(is_public=False).count()
-    notes_with_files = notes.exclude(file__isnull=True).count()
+    notes_with_files = notes.filter(files__isnull=False).distinct().count()
 
     context = {
         'notes': notes,
@@ -359,35 +286,243 @@ def note_list(request):
 
 
 @login_required
-def note_download(request, note_id):
+def note_download(request, file_id):
 
-    note = get_object_or_404(Note, id=note_id)
+    file_obj = get_object_or_404(NoteFile, id=file_id)
+    note = file_obj.note
+
 
     if not note.is_public and note.user != request.user:
-        raise PermissionDenied("You don't have permission to download this file")
+        messages.error(request, "You don't have permission to download this file")
+        return redirect('note_list')
 
-    if not note.file:
-        raise Http404("No file attached to this note")
+    if not file_obj.file:
+        messages.error(request, "File not found")
+        return redirect('note_list')
+
 
     note.views_count += 1
     note.save()
 
-    response = HttpResponse(note.file, content_type='application/octet-stream')
-    response['Content-Disposition'] = f'attachment; filename="{note.original_filename}"'
+
+    response = HttpResponse(file_obj.file, content_type='application/octet-stream')
+    response['Content-Disposition'] = f'attachment; filename="{file_obj.original_filename}"'
     return response
 
 
+@login_required
+def note_create(request):
+    if request.method == 'POST':
 
 
 
+        form = NoteForm(
+            request=request,
+            data=request.POST,
+            files=request.FILES
+        )
+
+        if form.is_valid():
+            note = form.save(commit=False)
+            note.user = request.user
+            note.save()
+
+
+            files = request.FILES.getlist('files')
+            file_count = 0
+
+            if files:
+                for file in files:
+                    try:
+                        NoteFile.objects.create(
+                            note=note,
+                            file=file
+                        )
+                        file_count += 1
+                        print(f"✅ File saved: {file.name}")
+                    except Exception as e:
+                        print(f"❌ Error saving file: {e}")
+            else:
+                print(" No files in request.FILES")
+
+            messages.success(
+                request,
+                f'Note "{note.title}" created successfully with {file_count} file(s)!'
+            )
+            return redirect('note_list')
+        else:
+            print("Form errors:", form.errors)
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'notes/notes.html', {
+                'form': form,
+                'title': 'Create New Note'
+            })
+
+    form = NoteForm(request=request)
+    return render(request, 'notes/notes.html', {
+        'form': form,
+        'title': 'Create New Note'
+    })
 
 
 
+@login_required
+def note_delete_file(request, file_id):
+    file_obj = get_object_or_404(NoteFile, id=file_id, note__user=request.user)
+    note_id = file_obj.note.id
+
+    if request.method == 'POST':
+        try:
+            filename = file_obj.original_filename
+            file_obj.file.delete(save=False)
+            file_obj.delete()
+            messages.success(request, f'✅ File "{filename}" deleted successfully!')
+        except Exception as e:
+            messages.error(request, f'❌ Error deleting file: {str(e)}')
+        return redirect('note_edit', note_id=note_id)
+
+    return render(request, 'notes/note_confirm_delete.html', {'file': file_obj})
 
 
+@login_required
+def note_delete_file(request, file_id):
+
+    file_obj = get_object_or_404(NoteFile, id=file_id, note__user=request.user)
+    note_id = file_obj.note.id
+
+    if request.method == 'POST':
+        try:
+            filename = file_obj.original_filename
 
 
+            if file_obj.file:
+                file_obj.file.delete(save=False)
 
+
+            file_obj.delete()
+
+            messages.success(request, f' File "{filename}" deleted successfully!')
+        except Exception as e:
+            messages.error(request, f' Error deleting file: {str(e)}')
+
+        return redirect('note_edit', note_id=note_id)
+
+
+    return render(request, 'notes/file_confirm_delete.html', {'file': file_obj})
+
+
+def note_detail(request, note_id):
+
+    note = get_object_or_404(Note, id=note_id)
+
+
+    if not note.is_public and note.user != request.user:
+        messages.error(request, "You don't have permission to view this note.")
+        return redirect('note_list')
+
+
+    if note.user != request.user:
+        note.views_count += 1
+        note.save()
+
+    context = {
+        'note': note,
+    }
+
+    return render(request, 'notes/note_detail.html', context)
+
+
+@login_required
+def note_edit(request, note_id):
+
+    note = get_object_or_404(Note, id=note_id, user=request.user)
+
+
+    print("=" * 60)
+    print(f"🔵 EDIT NOTE - User: {request.user.username}")
+    print(f"📝 Note: {note.title} (ID: {note.id})")
+    print(f"📚 Course: {note.course.title if note.course else 'None'}")
+    print("=" * 60)
+
+    if request.method == 'POST':
+        print("🔵 POST request received")
+        print(f"📁 FILES in request: {bool(request.FILES)}")
+        print(f"📄 Files count: {len(request.FILES.getlist('files'))}")
+
+
+        form = NoteForm(
+            request=request,
+            data=request.POST,
+            files=request.FILES,
+            instance=note
+        )
+
+        if form.is_valid():
+            note = form.save()
+            print(f"✅ Note saved: {note.title}")
+
+
+            files = request.FILES.getlist('files')
+            file_count = 0
+
+            for file in files:
+                try:
+                    NoteFile.objects.create(
+                        note=note,
+                        file=file
+                    )
+                    file_count += 1
+                    print(f"File saved: {file.name}")
+                except Exception as e:
+                    print(f"Error saving file: {e}")
+
+            if file_count > 0:
+                messages.success(request, f' {file_count} new file(s) added to "{note.title}"!')
+            else:
+                messages.success(request, f' Note "{note.title}" updated successfully!')
+
+            return redirect('note_list')
+        else:
+            print("Form errors:", form.errors)
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'notes/note_edit.html', {
+                'form': form,
+                'note': note,
+                'title': 'Edit Note'
+            })
+
+
+    form = NoteForm(
+        instance=note,
+        request=request
+    )
+
+
+    print(f"🔵 Form course queryset count: {form.fields['course'].queryset.count()}")
+
+    return render(request, 'notes/note_edit.html', {
+        'form': form,
+        'note': note,
+        'title': 'Edit Note'
+    })
+
+
+def main(request):
+
+    public_courses = Course.objects.filter(is_public=True).order_by('-created_at')
+    public_notes = Note.objects.filter(is_public=True).order_by('-created_at')
+
+    context = {
+        'public_courses': public_courses,
+        'public_notes': public_notes,
+    }
+
+
+    if request.user.is_authenticated:
+        context['my_courses'] = Course.objects.filter(user=request.user).order_by('-created_at')
+        context['my_notes'] = Note.objects.filter(user=request.user).order_by('-created_at')
+
+    return render(request, 'accounts/base.html', context)
 
 
 
