@@ -2,59 +2,409 @@
 
 {% block content %}
 <div class="container mt-4">
+
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-book text-primary"></i> My Courses</h2>
-        <a href="" class="btn btn-success">
+        <div>
+            <h2><i class="fas fa-graduation-cap text-primary"></i> Courses</h2>
+            <p class="text-muted">Manage your courses and discover public courses from other users</p>
+        </div>
+        <a href="{% url 'course_create' %}" class="btn btn-success rounded-pill px-4">
             <i class="fas fa-plus"></i> New Course
         </a>
     </div>
 
-    <div class="row">
-        {% for course in courses %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">{{ course.title }}</h5>
-                    <p class="card-text text-muted">{{ course.description|truncatewords:20|default:"No description" }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="badge bg-info">
-                            <i class="fas fa-file"></i> {{ course.get_notes_count }} Notes
-                        </span>
-                        {% if course.is_public %}
-                            <span class="badge bg-success">Public</span>
-                        {% else %}
-                            <span class="badge bg-secondary">Private</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent">
-                    <div class="btn toolbar" role="toolbar"  aria-label="Toolbar with button groups">
-                        <a href="{% url 'course_detail'  course.id %}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-eye"></i> View
-                        </a>
-                        <a href="" class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i>
-                        </a>
 
-                        <a href="{% url 'course_delete' course.id %}" class="btn btn-danger  "
-                          >
-                            <i class="fas fa-trash"></i>
-                        </a>
+    <div class="stat-grid">
+        <div class="stat-card bg-primary">
+            <h5><i class="fas fa-book"></i> My Courses</h5>
+            <h2 class="mb-0">{{ stats.total_my_courses }}</h2>
+        </div>
+        <div class="stat-card bg-success">
+            <h5><i class="fas fa-globe"></i> Public Courses</h5>
+            <h2 class="mb-0">{{ stats.total_public }}</h2>
+        </div>
+        <div class="stat-card bg-secondary">
+            <h5><i class="fas fa-lock"></i> Private Courses</h5>
+            <h2 class="mb-0">{{ stats.total_private }}</h2>
+        </div>
+        <div class="stat-card bg-info">
+            <h5><i class="fas fa-users"></i> All Courses</h5>
+            <h2 class="mb-0">{{ stats.total_all_courses }}</h2>
+        </div>
+    </div>
+
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>
+                <i class="fas fa-user-graduate text-primary me-2"></i> My Courses
+                <span class="badge badge-primary ms-2">{{ my_courses|length }}</span>
+            </h4>
+            <a href="{% url 'course_create' %}" class="btn btn-outline-primary btn-sm rounded-pill">
+                <i class="fas fa-plus"></i> Create New
+            </a>
+        </div>
+
+        {% if my_courses %}
+            <div class="course-grid">
+                {% for course in my_courses %}
+                <div class="card course-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title text-truncate" title="{{ course.title }}">
+                                {{ course.title }}
+                            </h5>
+                            {% if course.is_public %}
+                                <span class="badge badge-success">
+                                    <i class="fas fa-globe"></i>
+                                </span>
+                            {% else %}
+                                <span class="badge badge-secondary">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            {% endif %}
+                        </div>
+                        <p class="card-text text-muted small">
+                            {{ course.description|truncatewords:15|default:"No description" }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <span class="badge badge-info">
+                                <i class="fas fa-file-alt"></i> {{ course.get_notes_count }} Notes
+                            </span>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar"></i> {{ course.created_at|date:"Y-m-d" }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'course_detail' course.id %}" class="btn btn-primary btn-sm rounded-pill flex-grow-1">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="{% url 'course_edit' course.id %}" class="btn btn-warning btn-sm rounded-pill">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'course_delete' course.id %}" class="btn btn-danger btn-sm rounded-pill">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
+        {% else %}
             <div class="alert alert-info text-center">
                 <i class="fas fa-info-circle fa-2x"></i>
                 <p class="mt-2">You haven't created any courses yet.</p>
-                <a href="{% url 'course_create' %}" class="btn btn-primary">
+                <a href="{% url 'course_create' %}" class="btn btn-primary rounded-pill">
                     <i class="fas fa-plus"></i> Create Your First Course
                 </a>
             </div>
+        {% endif %}
+    </div>
+
+    <hr>
+
+
+    <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>
+                <i class="fas fa-globe-americas text-success me-2"></i> All Public Courses
+                <span class="badge badge-success ms-2">{{ all_courses|length }}</span>
+            </h4>
+            <span class="text-muted small">
+                <i class="fas fa-info-circle"></i> Courses shared by other users
+            </span>
         </div>
-        {% endfor %}
+
+        {% if all_courses %}
+            <div class="course-grid">
+                {% for course in all_courses %}
+                <div class="card course-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title text-truncate" title="{{ course.title }}">
+                                {{ course.title }}
+                            </h5>
+                            <span class="badge badge-success">
+                                <i class="fas fa-globe"></i>
+                            </span>
+                        </div>
+                        <p class="card-text text-muted small">
+                            {{ course.description|truncatewords:15|default:"No description" }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <span class="badge badge-info">
+                                <i class="fas fa-file-alt"></i> {{ course.get_notes_count }} Notes
+                            </span>
+                            <small class="text-muted">
+                                <i class="fas fa-user"></i> {{ course.user.username }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-primary btn-sm rounded-pill flex-grow-1">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="{% url 'note_create' %}?course={{ course.id }}" class="btn btn-outline-success btn-sm rounded-pill">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-secondary text-center">
+                <i class="fas fa-globe fa-2x text-muted"></i>
+                <p class="mt-2">No public courses available from other users.</p>
+                <p class="text-muted small">Make your courses public to share with the community!</p>
+            </div>
+        {% endif %}
     </div>
 </div>
+
+<style>
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f8f9fa;
+        color: #212529;
+        line-height: 1.6;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+    a {
+        text-decoration: none;
+    }
+    .text-muted {
+        color: #6c757d;
+    }
+    .text-primary { color: #667eea; }
+    .text-success { color: #28a745; }
+    .text-white { color: #fff; }
+
+
+    .mt-4 { margin-top: 1.5rem; }
+    .mb-0 { margin-bottom: 0; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-3 { margin-bottom: 1rem; }
+    .mb-4 { margin-bottom: 1.5rem; }
+    .mb-5 { margin-bottom: 3rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-4 { margin-top: 1.5rem; }
+    .me-2 { margin-right: 0.5rem; }
+    .ms-2 { margin-left: 0.5rem; }
+    .px-4 { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .d-flex { display: flex; }
+    .justify-content-between { justify-content: space-between; }
+    .align-items-center { align-items: center; }
+    .flex-grow-1 { flex-grow: 1; }
+    .gap-1 { gap: 0.25rem; }
+    .rounded-pill { border-radius: 50rem; }
+    .rounded-4 { border-radius: 20px; }
+    .border-0 { border: none; }
+    .shadow-sm { box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); }
+    .text-truncate {
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .small { font-size: 0.875rem; }
+    .text-center { text-align: center; }
+
+
+    .badge {
+        display: inline-block;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        border-radius: 50rem;
+        background: #e9ecef;
+        color: #212529;
+    }
+    .badge-success { background: #28a745; color: #fff; }
+    .badge-secondary { background: #6c757d; color: #fff; }
+    .badge-info { background: #17a2b8; color: #fff; }
+    .badge-primary { background: #667eea; color: #fff; }
+    .badge-success i, .badge-secondary i, .badge-info i { margin-left: 4px; }
+
+
+    .btn {
+        display: inline-block;
+        font-weight: 600;
+        text-align: center;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        border-radius: 50rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        color: #fff;
+    }
+    .btn-sm { padding: 0.25rem 0.75rem; font-size: 0.75rem; }
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #5a67d8, #6a3f8a);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .btn-success {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: #fff;
+    }
+    .btn-success:hover {
+        background: linear-gradient(135deg, #218838, #1aa179);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .btn-warning {
+        background: #ffc107;
+        color: #212529;
+    }
+    .btn-warning:hover {
+        background: #e0a800;
+        transform: translateY(-2px);
+    }
+    .btn-danger {
+        background: #dc3545;
+        color: #fff;
+    }
+    .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+    }
+    .btn-outline-primary {
+        background: transparent;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+    .btn-outline-primary:hover {
+        background: #667eea;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+    .btn-outline-success {
+        background: transparent;
+        color: #28a745;
+        border: 2px solid #28a745;
+    }
+    .btn-outline-success:hover {
+        background: #28a745;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+    .btn-outline-secondary {
+        background: transparent;
+        color: #6c757d;
+        border: 2px solid #6c757d;
+    }
+    .btn-outline-secondary:hover {
+        background: #6c757d;
+        color: #fff;
+    }
+
+
+    .card {
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-color: #667eea;
+    }
+    .card-body { padding: 1.25rem; }
+    .card-footer {
+        padding: 0.75rem 1.25rem;
+        background: transparent;
+        border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .card-text { margin-bottom: 0.5rem; }
+
+
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        padding: 1.25rem;
+        border-radius: 20px;
+        color: #fff;
+    }
+    .stat-card.bg-primary { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .stat-card.bg-success { background: linear-gradient(135deg, #28a745, #20c997); }
+    .stat-card.bg-secondary { background: #6c757d; }
+    .stat-card.bg-info { background: linear-gradient(135deg, #17a2b8, #0dcaf0); }
+    .stat-card h5 { font-size: 1rem; font-weight: 400; }
+    .stat-card h2 { font-size: 2rem; font-weight: 700; margin-top: 0.25rem; }
+
+
+    .course-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.5rem;
+    }
+
+
+    .alert {
+        padding: 1.5rem;
+        border-radius: 20px;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+    }
+    .alert-info { background: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
+    .alert-secondary { background: #e9ecef; border-color: #dee2e6; color: #383d41; }
+    .alert i { display: block; }
+    .alert p { margin-top: 0.5rem; }
+
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .course-card {
+        animation: fadeIn 0.5s ease-out;
+    }
+    .course-card:nth-child(2) { animation-delay: 0.1s; }
+    .course-card:nth-child(3) { animation-delay: 0.2s; }
+    .course-card:nth-child(4) { animation-delay: 0.3s; }
+
+
+    @media (max-width: 576px) {
+        .stat-grid { grid-template-columns: 1fr 1fr; }
+        .course-grid { grid-template-columns: 1fr; }
+        .d-flex.justify-content-between { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+        .text-truncate { max-width: 100px; }
+    }
+    hr { margin: 2rem 0; border: 0; border-top: 1px solid #dee2e6; }
+</style>
 {% endblock %}
