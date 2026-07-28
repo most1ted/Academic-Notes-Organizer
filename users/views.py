@@ -493,15 +493,15 @@ def note_edit(request, note_id):
 
 
     print("=" * 60)
-    print(f"🔵 EDIT NOTE - User: {request.user.username}")
-    print(f"📝 Note: {note.title} (ID: {note.id})")
-    print(f"📚 Course: {note.course.title if note.course else 'None'}")
+    print(f" EDIT NOTE - User: {request.user.username}")
+    print(f" Note: {note.title} (ID: {note.id})")
+    print(f" Course: {note.course.title if note.course else 'None'}")
     print("=" * 60)
 
     if request.method == 'POST':
-        print("🔵 POST request received")
-        print(f"📁 FILES in request: {bool(request.FILES)}")
-        print(f"📄 Files count: {len(request.FILES.getlist('files'))}")
+        print(" POST request received")
+        print(f" FILES in request: {bool(request.FILES)}")
+        print(f" Files count: {len(request.FILES.getlist('files'))}")
 
 
         form = NoteForm(
@@ -560,7 +560,7 @@ def note_edit(request, note_id):
         'title': 'Edit Note'
     })
 
-
+@login_required
 def main(request):
 
     public_courses = Course.objects.filter(is_public=True).order_by('-created_at')
