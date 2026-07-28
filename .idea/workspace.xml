@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4f5443d7-b907-4380-9bde-9748623727a7" name="Changes" comment="search for courses">
+    <list default="true" id="4f5443d7-b907-4380-9bde-9748623727a7" name="Changes" comment="docker">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AcademicNotesOrganizer/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/AcademicNotesOrganizer/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DockerFile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,6 +131,7 @@
       <workItem from="1785062006236" duration="3965000" />
       <workItem from="1785142942706" duration="32618000" />
       <workItem from="1785189303523" duration="1251000" />
+      <workItem from="1785191727011" duration="2340000" />
     </task>
     <task id="LOCAL-00001" summary="database changed">
       <option name="closed" value="true" />
@@ -380,7 +381,15 @@
       <option name="project" value="LOCAL" />
       <updated>1785188459311</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="docker">
+      <option name="closed" value="true" />
+      <created>1785191753748</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1785191753748</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -398,7 +407,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="user app" />
     <MESSAGE value="user app forms" />
     <MESSAGE value="user app forms and urls" />
     <MESSAGE value="postgresql" />
@@ -423,6 +431,7 @@
     <MESSAGE value="readme changed again" />
     <MESSAGE value="readme changed again1" />
     <MESSAGE value="search for courses" />
-    <option name="LAST_COMMIT_MESSAGE" value="search for courses" />
+    <MESSAGE value="docker" />
+    <option name="LAST_COMMIT_MESSAGE" value="docker" />
   </component>
 </project>
