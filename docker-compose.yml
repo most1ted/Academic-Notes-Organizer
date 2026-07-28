@@ -1,23 +1,40 @@
-
 services:
   db:
-    image: postgres
+    image: postgres:15
     environment:
-      POSTGRES_DB : mydb
-      POSTGRES_USER : user
-      POSTGRES_PASSWORD : pass
+      POSTGRES_DB: mydb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+    ports:
+      - "5432:5432"
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d mydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
   web:
     build: .
-    command : python  AcademicNotesOrganizer/manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    working_dir: /code
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/mydb
+      - DB_HOST=db
+      - DB_NAME=mydb
+      - DB_USER=user
+      - DB_PASSWORD=pass
+
 volumes:
   postgres_data:
