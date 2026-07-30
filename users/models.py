@@ -72,25 +72,7 @@ class NoteFile(models.Model):
             self.file_type = ext[1:] if ext else 'unknown'
         super().save(*args, **kwargs)
 
-    def get_file_icon(self):
-        icons = {
-            'pdf': 'fa-file-pdf',
-            'doc': 'fa-file-word',
-            'docx': 'fa-file-word',
-            'txt': 'fa-file-alt',
-            'md': 'fa-file-alt',
-            'jpg': 'fa-file-image',
-            'jpeg': 'fa-file-image',
-            'png': 'fa-file-image',
-            'gif': 'fa-file-image',
-            'zip': 'fa-file-archive',
-            'rar': 'fa-file-archive',
-            'ppt': 'fa-file-powerpoint',
-            'pptx': 'fa-file-powerpoint',
-            'xls': 'fa-file-excel',
-            'xlsx': 'fa-file-excel',
-        }
-        return icons.get(self.file_type, 'fa-file')
+
 
     def get_file_size_display(self):
         if self.file_size < 1024:

@@ -393,9 +393,9 @@ def note_create(request):
                             file=file
                         )
                         file_count += 1
-                        print(f"✅ File saved: {file.name}")
+                        print(f" File saved: {file.name}")
                     except Exception as e:
-                        print(f"❌ Error saving file: {e}")
+                        print(f" Error saving file: {e}")
             else:
                 print(" No files in request.FILES")
 

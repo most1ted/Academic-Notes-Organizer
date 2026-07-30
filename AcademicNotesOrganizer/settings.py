@@ -76,10 +76,10 @@ WSGI_APPLICATION = 'AcademicNotesOrganizer.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb',
-        'User': 'user',
-        'PASSWORD': 'pass',
-        "HOST": "db",
+        'NAME': 'student_db',
+        'User': 'GIGABYTE',
+        'PASSWORD': '1234',
+        "HOST": "localhost",
         'PORT': '5432',
     }
 }
